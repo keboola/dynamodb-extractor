@@ -1,0 +1,27 @@
+{
+    "name": "keboola/dynamodb-extractor",
+    "license": "MIT",
+    "type": "project",
+    "description": "Keboola DynamoDB Extractor",
+    "keywords": ["keboola", "dynamodb", "extractor", "aws"],
+    "authors": [
+        {
+            "name": "Vladimír Kriška",
+            "email": "vlado@keboola.com"
+        }
+    ],
+    "require": {
+        "php": "~7.0",
+        "aws/aws-sdk-php": "~3.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.3",
+        "squizlabs/php_codesniffer": "~2.6",
+        "codeclimate/php-test-reporter": "~0.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Keboola\\": "src/Keboola/"
+        }
+    }
+}

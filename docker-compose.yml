@@ -1,0 +1,17 @@
+version: "2"
+
+services:
+
+  app:
+    build: .
+    image: keboola/dynamodb-extractor
+    tty: true
+    stdin_open: true
+    links:
+      - dynamodb
+    command: bash
+    volumes:
+      - ./:/code
+
+  dynamodb:
+    build: docker/dynamodb
