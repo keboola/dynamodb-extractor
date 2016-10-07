@@ -18,4 +18,4 @@ WORKDIR /code
 
 RUN composer install --prefer-dist --no-interaction
 
-CMD php ./src/run.php --data=/data
+CMD php ./src/run.php /data
