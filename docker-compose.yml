@@ -14,4 +14,4 @@ services:
       - ./:/code
 
   dynamodb:
-    build: docker/dynamodb
+    image: quay.io/keboola/dynamodb-extractor-dynamodb
