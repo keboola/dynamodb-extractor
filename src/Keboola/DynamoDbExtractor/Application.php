@@ -24,6 +24,8 @@ class Application
 
     public function actionTestConnection(): array
     {
+        (new Extractor($this->parameters))->testConnection();
+
         return [
             'status' => 'ok'
         ];
