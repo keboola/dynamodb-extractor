@@ -13,5 +13,13 @@ services:
     volumes:
       - ./:/code
 
+  app-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+    links:
+      - dynamodb
+    command: sh -c './tests.sh'
+
   dynamodb:
     image: quay.io/keboola/dynamodb-extractor-dynamodb
