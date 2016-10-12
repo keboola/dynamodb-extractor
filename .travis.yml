@@ -11,7 +11,10 @@ before_script:
   - docker-compose build
 
 script:
-  - docker-compose run --rm app php -v
+  - >
+    docker-compose run
+    --rm
+    app-tests
 
 after_success:
   - docker images
