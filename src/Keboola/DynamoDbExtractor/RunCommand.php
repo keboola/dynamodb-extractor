@@ -40,7 +40,7 @@ class RunCommand extends Command
         switch ($action) {
             case 'testConnection':
                 $result = $application->actionTestConnection();
-                echo json_encode($result);
+                $output->write(\json_encode($result));
                 break;
             default:
                 echo 'Action "' . $action . '" not supported';
