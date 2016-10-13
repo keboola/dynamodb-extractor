@@ -5,21 +5,16 @@ namespace Keboola\DynamoDbExtractor;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Filesystem\Filesystem;
 
-class MissingDbParameterTest extends \PHPUnit_Framework_TestCase
+class MissingDbParameterTest extends ExtractorTestCase
 {
-    /** @var Filesystem */
-    private $fs;
-
     /** @var string */
-    private $dataDir = '/tmp/missing-db-params';
+    protected $dataDir = '/tmp/missing-db-params';
 
     protected function setUp()
     {
-        $this->fs = new Filesystem;
-        $this->fs->remove($this->dataDir);
-        $this->fs->mkdir($this->dataDir);
+        parent::setUp();
+
         $this->fs->dumpFile($this->dataDir . '/config.json', <<<JSON
 {
   "parameters": {

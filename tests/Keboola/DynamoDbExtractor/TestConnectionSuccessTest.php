@@ -4,21 +4,16 @@ namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Filesystem\Filesystem;
 
-class TestConnectionSuccessTest extends \PHPUnit_Framework_TestCase
+class TestConnectionSuccessTest extends ExtractorTestCase
 {
-    /** @var Filesystem */
-    private $fs;
-
     /** @var string */
-    private $dataDir = '/tmp/test-connection';
+    protected $dataDir = '/tmp/test-connection';
 
     protected function setUp()
     {
-        $this->fs = new Filesystem;
-        $this->fs->remove($this->dataDir);
-        $this->fs->mkdir($this->dataDir);
+        parent::setUp();
+
         $this->fs->dumpFile($this->dataDir . '/config.json', <<<JSON
 {
   "action": "testConnection",
