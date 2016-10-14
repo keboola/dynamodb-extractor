@@ -18,7 +18,15 @@ Docker application for exporting data from Amazon DynamoDB.
       "#secretAccessKey": "secret access key",
       "regionName": "eu-central-1"
     },
-    "exports": []
+    "exports": [
+      {
+        "id": 1,
+        "name": "my-movies",
+        "table": "Movies",
+        "enabled": true,
+        "incremental": true
+      }
+    ]
   }
 }
 ```
