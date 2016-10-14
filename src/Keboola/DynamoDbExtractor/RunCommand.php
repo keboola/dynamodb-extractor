@@ -34,13 +34,17 @@ class RunCommand extends Command
             JsonEncoder::FORMAT
         );
 
-        $application = new Application($config);
+        $extractor = new Extractor($config);
         $action = $config['action'] ?? 'run';
 
         switch ($action) {
             case 'testConnection':
-                $result = $application->actionTestConnection();
+                $result = $extractor->actionTestConnection();
                 $output->write(\json_encode($result));
+                break;
+            case 'run':
+                $outputPath = $dataDirectory . '/out/tables';
+                $extractor->actionRun($outputPath);
                 break;
             default:
                 echo 'Action "' . $action . '" not supported';

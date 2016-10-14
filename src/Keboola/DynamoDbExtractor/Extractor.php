@@ -3,6 +3,7 @@
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Symfony\Component\Config\Definition\Processor;
 
 class Extractor
 {
@@ -12,9 +13,12 @@ class Extractor
     /** @var DynamoDbClient */
     private $dynamoDbClient;
 
-    public function __construct(array $parameters)
+    public function __construct(array $config)
     {
-        $this->parameters = $parameters;
+        $this->parameters = (new Processor)->processConfiguration(
+            new ConfigDefinition,
+            [$config['parameters']]
+        );
 
         $this->dynamoDbClient = new DynamoDbClient([
             'endpoint' => $this->parameters['db']['endpoint'],
@@ -27,8 +31,16 @@ class Extractor
         ]);
     }
 
-    public function testConnection()
+    public function actionTestConnection(): array
     {
         $this->dynamoDbClient->listTables();
+
+        return [
+            'status' => 'ok'
+        ];
+    }
+
+    public function actionRun(string $outputPath)
+    {
     }
 }
