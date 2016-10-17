@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile-tests
     links:
       - dynamodb
-    command: sh -c './tests.sh'
+    command: sh -c 'php ./loadSampleData.php && ./tests.sh'
 
   dynamodb:
     image: quay.io/keboola/dynamodb-extractor-dynamodb
