@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
@@ -28,6 +29,9 @@ class RunCommand extends Command
             throw new Exception('Config file not found at path ' . $configFile);
         }
 
+        $outputPath = $dataDirectory . '/out/tables';
+        (new Filesystem())->mkdir($outputPath);
+
         $jsonDecode = new JsonDecode(true);
         $config = $jsonDecode->decode(
             file_get_contents($configFile),
@@ -43,7 +47,6 @@ class RunCommand extends Command
                 $output->write(\json_encode($result));
                 break;
             case 'run':
-                $outputPath = $dataDirectory . '/out/tables';
                 $extractor->actionRun($outputPath);
                 break;
             default:
