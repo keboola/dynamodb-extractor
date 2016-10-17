@@ -24,7 +24,12 @@ Docker application for exporting data from Amazon DynamoDB.
         "name": "my-movies",
         "table": "Movies",
         "enabled": true,
-        "incremental": true
+        "incremental": true,
+        "mapping": {
+          "title": "title",
+          "year": "year",
+          "info.rating": "rating"
+        }
       }
     ]
   }
