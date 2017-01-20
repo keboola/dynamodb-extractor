@@ -28,7 +28,7 @@ class RunCommand extends Command
             $configFile = $dataDirectory . '/config.json';
 
             if (!file_exists($configFile)) {
-                throw new Exception('Config file not found at path ' . $configFile);
+                throw new \Exception('Config file not found at path ' . $configFile);
             }
 
             $outputPath = $dataDirectory . '/out/tables';
