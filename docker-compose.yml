@@ -12,6 +12,7 @@ services:
     command: bash
     volumes:
       - ./:/code
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
 
   app-tests:
     build:
