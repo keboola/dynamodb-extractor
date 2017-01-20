@@ -38,6 +38,7 @@ class Export
     /**
      * Exports table from DynamoDb
      * @return string
+     * @throws UserException
      */
     public function export(): string
     {
@@ -60,8 +61,11 @@ class Export
                 }
             } while (isset($response['LastEvaluatedKey']));
         } catch (DynamoDbException $e) {
-            echo "Unable to scan:\n";
-            echo $e->getMessage() . "\n";
+            if ($e->getStatusCode() !== null && strpos($e->getStatusCode(), '4') === 0) {
+                throw new UserException($e->getAwsErrorCode());
+            } else {
+                throw $e;
+            }
         }
 
         return $this->filename;
