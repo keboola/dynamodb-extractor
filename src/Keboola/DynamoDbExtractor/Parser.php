@@ -19,7 +19,7 @@ class Parser
     public function __construct(string $name, string $filename, array $mapping)
     {
         $this->name = $name;
-        if (!file_exists($this->filename)) {
+        if (!file_exists($filename)) {
             throw new \Exception('Specified file not exists: ' . $this->filename);
         }
         $this->filename = $filename;
