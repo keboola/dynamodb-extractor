@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class RunCommand extends Command
 {
@@ -23,35 +24,47 @@ class RunCommand extends Command
     {
         $dataDirectory = $input->getArgument('data directory');
 
-        $configFile = $dataDirectory . '/config.json';
+        try {
+            $configFile = $dataDirectory . '/config.json';
 
-        if (!file_exists($configFile)) {
-            throw new Exception('Config file not found at path ' . $configFile);
-        }
+            if (!file_exists($configFile)) {
+                throw new Exception('Config file not found at path ' . $configFile);
+            }
 
-        $outputPath = $dataDirectory . '/out/tables';
-        (new Filesystem())->mkdir($outputPath);
+            $outputPath = $dataDirectory . '/out/tables';
+            (new Filesystem())->mkdir($outputPath);
 
-        $jsonDecode = new JsonDecode(true);
-        $config = $jsonDecode->decode(
-            file_get_contents($configFile),
-            JsonEncoder::FORMAT
-        );
+            $jsonDecode = new JsonDecode(true);
+            $config = $jsonDecode->decode(
+                file_get_contents($configFile),
+                JsonEncoder::FORMAT
+            );
 
-        $extractor = new Extractor($config);
-        $action = $config['action'] ?? 'run';
+            $extractor = new Extractor($config);
+            $action = $config['action'] ?? 'run';
 
-        switch ($action) {
-            case 'testConnection':
-                $result = $extractor->actionTestConnection();
-                $output->write(\json_encode($result));
-                break;
-            case 'run':
-                $extractor->actionRun($outputPath);
-                break;
-            default:
-                echo 'Action "' . $action . '" not supported';
-                break;
+            switch ($action) {
+                case 'testConnection':
+                    $result = $extractor->actionTestConnection();
+                    $output->write(\json_encode($result));
+                    break;
+                case 'run':
+                    $extractor->actionRun($outputPath);
+                    break;
+                default:
+                    echo 'Action "' . $action . '" not supported';
+                    break;
+            }
+            return 0;
+        } catch (InvalidConfigurationException $e) {
+            $output->writeln($e->getMessage());
+            return 1;
+        } catch (UserException $e) {
+            $output->writeln($e->getMessage());
+            return 1;
+        } catch (\Exception $e) {
+            $output->writeln('Application error');
+            return 2;
         }
     }
 }
