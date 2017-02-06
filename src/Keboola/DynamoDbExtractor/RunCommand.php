@@ -58,13 +58,7 @@ class RunCommand extends Command
                     break;
             }
             return 0;
-        } catch (InvalidConfigurationException $e) {
-            if ($testMode === true) {
-                throw $e;
-            }
-            $output->writeln($e->getMessage());
-            return 1;
-        } catch (UserException $e) {
+        } catch (InvalidConfigurationException | UserException $e) {
             if ($testMode === true) {
                 throw $e;
             }
