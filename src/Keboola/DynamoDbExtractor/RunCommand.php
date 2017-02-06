@@ -18,11 +18,13 @@ class RunCommand extends Command
         $this->setName('run');
         $this->setDescription('Runs extractor');
         $this->addArgument('data directory', InputArgument::REQUIRED, 'Data directory');
+        $this->addOption('test-mode', null, null, 'Test mode');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dataDirectory = $input->getArgument('data directory');
+        $testMode = $input->getOption('test-mode');
 
         try {
             $configFile = $dataDirectory . '/config.json';
@@ -57,12 +59,21 @@ class RunCommand extends Command
             }
             return 0;
         } catch (InvalidConfigurationException $e) {
+            if ($testMode === true) {
+                throw $e;
+            }
             $output->writeln($e->getMessage());
             return 1;
         } catch (UserException $e) {
+            if ($testMode === true) {
+                throw $e;
+            }
             $output->writeln($e->getMessage());
             return 1;
         } catch (\Exception $e) {
+            if ($testMode === true) {
+                throw $e;
+            }
             $output->writeln('Application error');
             return 2;
         }
