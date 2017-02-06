@@ -18,4 +18,9 @@ abstract class ExtractorTestCase extends \PHPUnit_Framework_TestCase
         $this->fs->remove($this->dataDir);
         $this->fs->mkdir($this->dataDir);
     }
+
+    protected function tearDown()
+    {
+        $this->fs->remove($this->dataDir);
+    }
 }
