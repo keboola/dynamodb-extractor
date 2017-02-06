@@ -1,5 +1,4 @@
-FROM php:7.0
-MAINTAINER Vladimír Kriška <vlado@keboola.com>
+FROM php:7.1
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -q \
