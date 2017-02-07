@@ -22,11 +22,6 @@ class Extractor
             [$config['parameters']]
         );
 
-        // check for duplicate export names
-        if (count($this->parameters['exports']) !== count(array_unique(array_column($this->parameters['exports'], 'name')))) {
-            throw new UserException('Please remove duplicate export names');
-        }
-
         // create DynamoDbClient instance
         $this->dynamoDbClient = new DynamoDbClient([
             'endpoint' => $this->parameters['db']['endpoint'],
@@ -53,15 +48,12 @@ class Extractor
     }
 
     /**
+     * Runs data extraction
      * @param string $outputPath
-     * @throws \Exception
      */
-    public function actionRun(string $outputPath)
+    public function actionRun(string $outputPath): void
     {
-        // check if there are enabled exports
-        if (array_sum(array_column($this->parameters['exports'], 'enabled')) === 0) {
-            throw new UserException('Please enable at least one export');
-        }
+        $this->validateExports($this->parameters['exports']);
 
         foreach ($this->parameters['exports'] as $exportOptions) {
             $export = new Export($this->dynamoDbClient, $exportOptions, $outputPath);
@@ -76,6 +68,24 @@ class Extractor
                 $parser->parseAndWriteCsvFiles();
                 $export->cleanup();
             }
+        }
+    }
+
+    /**
+     * Validates exports
+     * @param array $exports
+     * @throws UserException
+     */
+    private function validateExports(array $exports): void
+    {
+        // check if there are enabled exports
+        if (array_sum(array_column($exports, 'enabled')) === 0) {
+            throw new UserException('Please enable at least one export');
+        }
+
+        // check for duplicate export names
+        if (count($exports) !== count(array_unique(array_column($exports, 'name')))) {
+            throw new UserException('Please remove duplicate export names');
         }
     }
 }
