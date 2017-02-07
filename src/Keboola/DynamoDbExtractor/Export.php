@@ -48,6 +48,13 @@ class Export
             'TableName' => $this->exportOptions['table'],
         ];
 
+        if (isset($this->exportOptions['dateFilter'])) {
+            $params = array_merge(
+                $params,
+                $this->createParamsFromDateFilter($this->exportOptions['dateFilter'])
+            );
+        }
+
         $scanLimit = new ScanLimit(1000, $this->exportOptions['limit'] ?? null);
 
         try {
@@ -90,5 +97,25 @@ class Export
     public function cleanup()
     {
         $this->filesystem->remove($this->filename);
+    }
+
+    /**
+     * Creates filtering params from date filter
+     * @param array $dateFilter
+     * @return array
+     */
+    private function createParamsFromDateFilter(array $dateFilter): array
+    {
+        return [
+            'FilterExpression' => '#field >= :value',
+            'ExpressionAttributeNames' => [
+                '#field' => $dateFilter['field'],
+            ],
+            'ExpressionAttributeValues' => [
+                ':value' => [
+                    'S' => date($dateFilter['format'], strtotime($dateFilter['value']))
+                ]
+            ]
+        ];
     }
 }
