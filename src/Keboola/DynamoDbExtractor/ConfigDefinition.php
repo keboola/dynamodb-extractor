@@ -48,6 +48,8 @@ class ConfigDefinition implements ConfigurationInterface
                                 ->isRequired()
                                 ->cannotBeEmpty()
                             ->end()
+                            ->integerNode('limit')
+                            ->end()
                             ->booleanNode('enabled')
                                 ->defaultValue(true)
                             ->end()

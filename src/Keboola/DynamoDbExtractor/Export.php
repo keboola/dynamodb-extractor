@@ -48,18 +48,22 @@ class Export
             'TableName' => $this->exportOptions['table'],
         ];
 
+        $scanLimit = new ScanLimit(1000, $this->exportOptions['limit'] ?? null);
+
         try {
             do {
                 if (isset($response, $response['LastEvaluatedKey'])) {
                     $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
                 }
+                $params['Limit'] = $scanLimit->getBatchSize();
                 $response = $this->dynamoDbClient->scan($params);
+                $scanLimit->decreaseLimit($response['Count']);
 
                 foreach ($response['Items'] as $item) {
                     $json = \json_encode($marshaler->unmarshalItem($item));
                     FileHelper::appendContentToFile($this->filename, $json . "\n");
                 }
-            } while (isset($response['LastEvaluatedKey']));
+            } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
         } catch (DynamoDbException $e) {
             if ($e->getStatusCode() !== null && strpos($e->getStatusCode(), '4') === 0) {
                 throw new UserException($e->getAwsErrorCode());
