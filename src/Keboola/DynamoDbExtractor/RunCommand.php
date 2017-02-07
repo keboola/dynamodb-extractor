@@ -54,7 +54,7 @@ class RunCommand extends Command
                     $extractor->actionRun($outputPath);
                     break;
                 default:
-                    echo 'Action "' . $action . '" not supported';
+                    $output->writeln('Action "' . $action . '" not supported');
                     break;
             }
             return 0;
