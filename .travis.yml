@@ -9,12 +9,13 @@ before_script:
   - docker -v
   - docker-compose -v
   - docker-compose build app
-  - docker-compose build app-tests
+  - docker-compose build app-tests-with-report
 
 script:
   - >
     docker-compose run
     --rm
+    -e CODECLIMATE_REPO_TOKEN=$CODECLIMATE_REPO_TOKEN
     app-tests
 
 after_success:

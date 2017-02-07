@@ -22,5 +22,18 @@ services:
       - dynamodb
     command: sh -c 'php ./loadSampleData.php && ./tests.sh'
 
+  app-tests-with-report:
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+    links:
+      - dynamodb
+    command: >
+             sh -c '
+             php ./loadSampleData.php
+             && ./tests.sh
+             && ./vendor/bin/test-reporter
+             '
+
   dynamodb:
     image: quay.io/keboola/dynamodb-extractor-dynamodb
