@@ -24,7 +24,7 @@ class Extractor
 
         // check for duplicate export names
         if (count($this->parameters['exports']) !== count(array_unique(array_column($this->parameters['exports'], 'name')))) {
-            throw new \Exception('Please remove duplicate export names');
+            throw new UserException('Please remove duplicate export names');
         }
 
         // create DynamoDbClient instance
