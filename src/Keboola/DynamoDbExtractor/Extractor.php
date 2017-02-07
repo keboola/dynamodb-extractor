@@ -60,7 +60,7 @@ class Extractor
     {
         // check if there are enabled exports
         if (array_sum(array_column($this->parameters['exports'], 'enabled')) === 0) {
-            throw new \Exception('Please enable at least one export');
+            throw new UserException('Please enable at least one export');
         }
 
         foreach ($this->parameters['exports'] as $exportOptions) {
