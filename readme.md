@@ -9,32 +9,15 @@ Docker application for exporting data from Amazon DynamoDB.
 
 ## Configuration
 
-```json
-{
-  "parameters": {
-    "db": {
-      "endpoint": "endpoint",
-      "accessKeyId": "access key id",
-      "#secretAccessKey": "secret access key",
-      "regionName": "eu-central-1"
-    },
-    "exports": [
-      {
-        "id": 1,
-        "name": "my-movies",
-        "table": "Movies",
-        "enabled": true,
-        "incremental": true,
-        "mapping": {
-          "title": "title",
-          "year": "year",
-          "info.rating": "rating"
-        }
-      }
-    ]
-  }
-}
-```
+Sample configuration and its description can be found [here](/config.md).
+
+## Output
+
+tbd
+
+## Development
+
+tbd
 
 ## License
 
