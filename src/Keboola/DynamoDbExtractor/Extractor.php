@@ -68,6 +68,8 @@ class Extractor
                     );
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
+                } else {
+                    echo 'No documents found for export: ' . $exportOptions['name'] . "\n";
                 }
             }
         }
