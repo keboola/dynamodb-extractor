@@ -45,7 +45,7 @@ class RunCommand extends Command
                 JsonEncoder::FORMAT
             );
 
-            $extractor = new Extractor($config);
+            $extractor = new Extractor($config, $output);
             $action = $config['action'] ?? 'run';
 
             switch ($action) {

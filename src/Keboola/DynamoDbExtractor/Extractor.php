@@ -5,6 +5,7 @@ namespace Keboola\DynamoDbExtractor;
 use Aws\DynamoDb\DynamoDbClient;
 use Nette\Utils\Strings;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Extractor
 {
@@ -14,13 +15,18 @@ class Extractor
     /** @var DynamoDbClient */
     private $dynamoDbClient;
 
-    public function __construct(array $config)
+    /** @var OutputInterface */
+    private $consoleOutput;
+
+    public function __construct(array $config, OutputInterface $output)
     {
         // validate configuration with ConfigDefinition
         $this->parameters = (new Processor)->processConfiguration(
             new ConfigDefinition,
             [$config['parameters']]
         );
+
+        $this->consoleOutput = $output;
 
         // create DynamoDbClient instance
         $this->dynamoDbClient = new DynamoDbClient([
@@ -56,7 +62,7 @@ class Extractor
         $this->validateExports($this->parameters['exports']);
 
         foreach ($this->parameters['exports'] as $exportOptions) {
-            $export = new Export($this->dynamoDbClient, $exportOptions, $outputPath);
+            $export = new Export($this->dynamoDbClient, $exportOptions, $outputPath, $this->consoleOutput);
 
             if ($export->isEnabled()) {
                 $filename = $export->export();
@@ -64,12 +70,13 @@ class Extractor
                     $parser = new Parser(
                         Strings::webalize($exportOptions['name']),
                         $filename,
-                        $exportOptions['mapping']
+                        $exportOptions['mapping'],
+                        $this->consoleOutput
                     );
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
                 } else {
-                    echo 'No documents found for export: ' . $exportOptions['name'] . "\n";
+                    $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
                 }
             }
         }

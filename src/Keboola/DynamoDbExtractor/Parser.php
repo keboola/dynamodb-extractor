@@ -4,23 +4,32 @@ namespace Keboola\DynamoDbExtractor;
 
 use Keboola\CsvMap\Mapper;
 use Nette\Utils\Strings;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Parser
 {
-    private $filename;
-
-    private $mapping;
-
+    /** @var string */
     private $name;
 
+    /** @var string */
+    private $filename;
+
+    /** @var array */
+    private $mapping;
+
+    /** @var OutputInterface */
+    private $consoleOutput;
+
+    /** @var Filesystem */
     private $filesystem;
 
-    public function __construct(string $name, string $filename, array $mapping)
+    public function __construct(string $name, string $filename, array $mapping, OutputInterface $output)
     {
         $this->name = $name;
         $this->filename = $filename;
         $this->mapping = $mapping;
+        $this->consoleOutput = $output;
 
         $this->filesystem = new Filesystem;
     }
@@ -30,7 +39,7 @@ class Parser
      */
     public function parseAndWriteCsvFiles()
     {
-        $this->logToConsoleOutput('Parsing "' . $this->filename . '"');
+        $this->consoleOutput->writeln('Parsing "' . $this->filename . '"');
 
         $handle = fopen($this->filename, 'r');
 
@@ -44,7 +53,7 @@ class Parser
             $this->write($parser->getCsvFiles());
         }
 
-        $this->logToConsoleOutput('Done "' . $this->filename . '"');
+        $this->consoleOutput->writeln('Done');
     }
 
     /**
@@ -71,14 +80,5 @@ class Parser
 
             $this->filesystem->remove($file->getPathname());
         }
-    }
-
-    /**
-     * Echoes a message
-     * @param string $message
-     */
-    private function logToConsoleOutput(string $message)
-    {
-        echo $message . "\n";
     }
 }

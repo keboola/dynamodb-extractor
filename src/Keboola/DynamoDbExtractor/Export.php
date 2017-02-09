@@ -6,18 +6,22 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Nette\Utils\Strings;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Export
 {
+    /** @var DynamoDbClient */
+    private $dynamoDbClient;
+
     /** @var array */
     private $exportOptions;
 
     /** @var string */
     private $outputPath;
 
-    /** @var DynamoDbClient */
-    private $dynamoDbClient;
+    /** @var OutputInterface  */
+    private $consoleOutput;
 
     /** @var Filesystem */
     private $filesystem;
@@ -25,11 +29,16 @@ class Export
     /** @var string */
     private $filename;
 
-    public function __construct(DynamoDbClient $dynamoDbClient, array $exportOptions, string $outputPath)
-    {
+    public function __construct(
+        DynamoDbClient $dynamoDbClient,
+        array $exportOptions,
+        string $outputPath,
+        OutputInterface $output
+    ) {
         $this->dynamoDbClient = $dynamoDbClient;
-        $this->outputPath = $outputPath;
         $this->exportOptions = $exportOptions;
+        $this->outputPath = $outputPath;
+        $this->consoleOutput = $output;
 
         $this->filesystem = new Filesystem;
         $this->filename = $this->outputPath . '/' . Strings::webalize($this->exportOptions['name']) . '.json';
