@@ -38,7 +38,7 @@
 ## Description of `parameters`
 
 - `db`: DynamoDB instance connection options
-    - `endpoint`: https://your-dynamodb-instance.com/
+    - `endpoint`: `https://your-dynamodb-instance.com/`
     - `accessKeyId`: Access key id
     - `#secretAccessKey`: Secret access key (will be encrypted)
     - `regionName`: Region
@@ -55,3 +55,18 @@
         - `value`: date string from which date value will be created (e.g. `-2 days`)
     - `limit` (optional): how many documents you want to export
     - `mapping`: how to map fields in document to CSV columns
+
+
+### `dateFilter` and its fields
+
+tbd
+
+### `mapping` and its fields
+
+tbd
+
+## General filtering options
+
+tbd
+
+## Links
