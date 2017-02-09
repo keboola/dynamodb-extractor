@@ -9,7 +9,7 @@ use Nette\Utils\Strings;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Export
+class Exporter
 {
     /** @var DynamoDbClient */
     private $dynamoDbClient;
@@ -95,7 +95,7 @@ class Export
      * Returns if export is enabled or not
      * @return bool
      */
-    public function isEnabled(): bool
+    public function hasEnabledExport(): bool
     {
         return (bool) ($this->exportOptions['enabled'] ?? false);
     }

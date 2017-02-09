@@ -62,9 +62,9 @@ class Extractor
         $this->validateExports($this->parameters['exports']);
 
         foreach ($this->parameters['exports'] as $exportOptions) {
-            $export = new Export($this->dynamoDbClient, $exportOptions, $outputPath, $this->consoleOutput);
+            $export = new Exporter($this->dynamoDbClient, $exportOptions, $outputPath, $this->consoleOutput);
 
-            if ($export->isEnabled()) {
+            if ($export->hasEnabledExport()) {
                 $filename = $export->export();
                 if (file_exists($filename)) {
                     $parser = new Parser(
