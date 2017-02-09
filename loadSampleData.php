@@ -32,7 +32,7 @@ $params = [
     'AttributeDefinitions' => [
         [
             'AttributeName' => 'year',
-            'AttributeType' => 'N'
+            'AttributeType' => 'S'
         ],
         [
             'AttributeName' => 'title',
@@ -64,7 +64,7 @@ try {
         $info = $movie['info'];
 
         $json = json_encode([
-            'year' => $year,
+            'year' => strval($year),
             'title' => $title,
             'info' => $info
         ]);
