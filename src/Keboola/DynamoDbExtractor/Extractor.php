@@ -60,13 +60,15 @@ class Extractor
 
             if ($export->isEnabled()) {
                 $filename = $export->export();
-                $parser = new Parser(
-                    Strings::webalize($exportOptions['name']),
-                    $filename,
-                    $exportOptions['mapping']
-                );
-                $parser->parseAndWriteCsvFiles();
-                $export->cleanup();
+                if (file_exists($filename)) {
+                    $parser = new Parser(
+                        Strings::webalize($exportOptions['name']),
+                        $filename,
+                        $exportOptions['mapping']
+                    );
+                    $parser->parseAndWriteCsvFiles();
+                    $export->cleanup();
+                }
             }
         }
     }
