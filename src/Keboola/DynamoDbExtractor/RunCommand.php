@@ -2,6 +2,8 @@
 
 namespace Keboola\DynamoDbExtractor;
 
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +27,7 @@ class RunCommand extends Command
     {
         $dataDirectory = $input->getArgument('data directory');
         $testMode = $input->getOption('test-mode');
+        $logger = new Logger('app-errors', [new ErrorLogHandler]);
 
         try {
             $configFile = $dataDirectory . '/config.json';
@@ -68,7 +71,9 @@ class RunCommand extends Command
             if ($testMode === true) {
                 throw $e;
             }
-            $output->writeln('Application error');
+            $logger->error($e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
             return 2;
         }
     }
