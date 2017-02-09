@@ -50,6 +50,8 @@ class ConfigDefinition implements ConfigurationInterface
                             ->end()
                             ->integerNode('limit')
                             ->end()
+                            ->variableNode('dateFilter')
+                            ->end()
                             ->booleanNode('enabled')
                                 ->defaultValue(true)
                             ->end()

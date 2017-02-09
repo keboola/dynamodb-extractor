@@ -87,5 +87,33 @@ class Extractor
         if (count($exports) !== count(array_unique(array_column($exports, 'name')))) {
             throw new UserException('Please remove duplicate export names');
         }
+
+        foreach ($exports as $export) {
+            if (isset($export['dateFilter'])) {
+                $this->validateDateFilter($export['dateFilter'], $export['name']);
+            }
+        }
+    }
+
+    /**
+     * Validates export's "dateFilter"
+     * @param array $dateFilter
+     * @param string $exportName
+     * @throws UserException
+     */
+    private function validateDateFilter(array $dateFilter, string $exportName)
+    {
+        if (!isset($dateFilter['field'], $dateFilter['format'], $dateFilter['value'])) {
+            throw new UserException(
+                'Please check if "dateFilter" contains all required parameters (field, format and value) '
+                . 'in "'. $exportName . '" export'
+            );
+        }
+
+        if (strtotime($dateFilter['value']) === false) {
+            throw new UserException(
+                'Please check "value" field of "dateFiler" in "'. $exportName . '" export'
+            );
+        }
     }
 }
