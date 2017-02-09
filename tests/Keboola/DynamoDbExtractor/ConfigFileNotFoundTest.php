@@ -24,6 +24,11 @@ class ConfigFileNotFoundTest extends ExtractorTestCase
         ]);
 
         $this->assertSame(2, $exitCode);
+
+        $this->assertContains(
+            'app-errors.ERROR: Config file not found at path /tmp/config-file-not-found/config.json',
+            file_get_contents('/code/error.log')
+        );
     }
 
     public function testConfigFileNotFoundTestMode()

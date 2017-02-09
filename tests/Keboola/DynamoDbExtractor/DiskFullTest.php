@@ -63,11 +63,17 @@ JSON
         ]);
 
         $this->assertSame(2, $exitCode);
+
+        $this->assertContains(
+            'possibly out of free disk space',
+            file_get_contents('/code/error.log')
+        );
     }
 
     public function testDiskFullTestMode()
     {
         $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('app-errors.ERROR: file_put_contents(): Only');
         $this->expectExceptionMessage('possibly out of free disk space');
 
         $application = new Application;
