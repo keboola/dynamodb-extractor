@@ -21,4 +21,4 @@ tbd
 
 ## License
 
-MIT. See license file.
+MIT. See [license file.](/license.md)
