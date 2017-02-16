@@ -36,7 +36,7 @@ Application is prepared for run in container, you can start development same way
 After seeing all tests green, continue:
 
 1. Run service: `docker-compose run --rm app` (starts container with `bash`)
-2. Load sample data: `php loadSampleData.php`
+2. Create tables/indexes and load sample data: `php init.php`
 3. Write tests and code
 4. Run tests: `./tests.sh`
 

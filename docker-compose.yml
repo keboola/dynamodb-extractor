@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile-tests
     links:
       - dynamodb
-    command: sh -c 'php ./loadSampleData.php && ./tests.sh'
+    command: sh -c 'php ./init.php && ./tests.sh'
 
   app-tests-with-report:
     build:
@@ -30,7 +30,7 @@ services:
       - dynamodb
     command: >
              sh -c '
-             php ./loadSampleData.php
+             php ./init.php
              && ./tests.sh
              && ./vendor/bin/test-reporter
              '
