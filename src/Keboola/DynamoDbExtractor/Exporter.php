@@ -57,6 +57,10 @@ class Exporter
             'TableName' => $this->exportOptions['table'],
         ];
 
+        if (isset($this->exportOptions['index'])) {
+            $params['IndexName'] = $this->exportOptions['index'];
+        }
+
         if (isset($this->exportOptions['dateFilter'])) {
             $params = array_merge(
                 $params,
