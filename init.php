@@ -5,6 +5,9 @@ require __DIR__ . '/vendor/autoload.php';
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+$consoleOutput = new ConsoleOutput;
 
 $dynamoDb = new DynamoDbClient([
     'endpoint' => 'http://dynamodb:8000',
@@ -16,7 +19,15 @@ $dynamoDb = new DynamoDbClient([
     'version' => '2012-08-10'
 ]);
 
-// create table
+try {
+    $dynamoDb->deleteTable([
+        'TableName' => 'Movies',
+    ]);
+    $consoleOutput->writeln('Table deleted.');
+} catch (Exception $e) {
+    $consoleOutput->writeln('Table not deleted.');
+}
+
 $params = [
     'TableName' => 'Movies',
     'KeySchema' => [
