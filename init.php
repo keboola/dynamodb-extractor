@@ -83,23 +83,13 @@ try {
     echo 'Created table.  Status: ' .
         $result['TableDescription']['TableStatus'] ."\n";
 
-
-    // load sample data
-
     $marshaler = new Marshaler();
 
     $movies = json_decode(file_get_contents(__DIR__ . '/tests/moviedata-10.json'), true);
 
     foreach ($movies as $movie) {
-        $year = $movie['year'];
-        $title = $movie['title'];
-        $info = $movie['info'];
-
-        $json = json_encode([
-            'year' => strval($year),
-            'title' => $title,
-            'info' => $info
-        ]);
+        $movie['year'] = strval($movie['year']);
+        $json = json_encode($movie);
 
         $params = [
             'TableName' => 'Movies',
