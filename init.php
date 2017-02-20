@@ -33,28 +33,49 @@ $params = [
     'KeySchema' => [
         [
             'AttributeName' => 'year',
-            'KeyType' => 'HASH'  //Partition key
+            'KeyType' => 'HASH',
         ],
         [
             'AttributeName' => 'title',
-            'KeyType' => 'RANGE'  //Sort key
-        ]
+            'KeyType' => 'RANGE'
+        ],
     ],
     'AttributeDefinitions' => [
         [
             'AttributeName' => 'year',
-            'AttributeType' => 'S'
+            'AttributeType' => 'S',
         ],
         [
             'AttributeName' => 'title',
-            'AttributeType' => 'S'
+            'AttributeType' => 'S',
         ],
-
     ],
     'ProvisionedThroughput' => [
         'ReadCapacityUnits' => 10,
-        'WriteCapacityUnits' => 10
-    ]
+        'WriteCapacityUnits' => 10,
+    ],
+    'GlobalSecondaryIndexes' => [
+        [
+            'IndexName' => 'Movies_title',
+            'ProvisionedThroughput' => [
+                'ReadCapacityUnits' => 10,
+                'WriteCapacityUnits' => 10,
+            ],
+            'KeySchema' => [
+                [
+                    'AttributeName' => 'title',
+                    'KeyType' => 'HASH',
+                ],
+                [
+                    'AttributeName' => 'year',
+                    'KeyType' => 'RANGE',
+                ],
+            ],
+            'Projection' => [
+                'ProjectionType' => 'ALL',
+            ],
+        ],
+    ],
 ];
 
 try {
