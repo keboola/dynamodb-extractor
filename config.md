@@ -16,6 +16,7 @@
         "id": 1,
         "name": "my-movies",
         "table": "Movies",
+        "index": "Movies_SomeIndex",
         "enabled": true,
         "incremental": true,
         "dateFilter": {
@@ -47,6 +48,7 @@
     - `id`: unique numeric identifier of export
     - `name`: unique string identifier of export (base table will be named after it)
     - `table`: name of the table to export from
+    - `index`: (optional) name of the index to export from
     - `enabled` (optional, default: `true`): if export is enabled or not (there has to be aty least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
     - `dateFilter` (optional): how to filter scanned documents
