@@ -39,7 +39,7 @@
 ## Description of `parameters`
 
 - `db`: DynamoDB instance connection options
-    - `endpoint`: `https://your-dynamodb-instance.com/`
+    - `endpoint`: `https://dynamodb.REGION.amazonaws.com`
     - `accessKeyId`: Access key id
     - `#secretAccessKey`: Secret access key (will be encrypted)
     - `regionName`: Region
@@ -49,7 +49,7 @@
     - `name`: unique string identifier of export (base table will be named after it)
     - `table`: name of the table to export from
     - `index`: (optional) name of the index to export from
-    - `enabled` (optional, default: `true`): if export is enabled or not (there has to be aty least one enabled export)
+    - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
     - `dateFilter` (optional): how to filter scanned documents
         - `field`: field name in document by which you want to filter
@@ -61,7 +61,23 @@
 
 ### `dateFilter` and its fields
 
-tbd
+You can specify `dateFilter` parameter to filter documents you want export. Filter condition is
+composed from 3 fields: `field`, `format` and `value`.
+
+The `value` field is passed to *strtotime* function. Then the `format` and `value` fields are passed
+to *date* function to create final value which will be used to filter documents. Something like
+`date($format, strtotime($value))`.
+
+#### Example
+
+(for date `2018-03-13 19:00:00`)
+
+|field|format|value|composed condition|
+|---|---|---|---|
+|`createdTime`|`Y`|`today`|`createdTime >= 2018`|
+|`createdTime`|`Y-m-d`|`-2 days`|`createdTime >= 2018-03-11`|
+|`createdTime`|`Y-m-d H:i:s`|`-10 hours`|`createdTime >= 2018-03-13 08:00:00`|
+|`createdTime`|`Y-m-d`|`2018-01-01`|`createdTime >= 2018-01-01`|
 
 ### `mapping` and its fields
 
