@@ -65,6 +65,11 @@
 
 ### `dateFilter`
 
+*Note: To be able to use `dateFilter` and incremental loads, make sure your database (or index)
+contains field by which documents can be filtered. E.g. add `creationDate` to every document you create*
+
+Extractor uses `Scan` operation to selecting documents from DynamoDB.
+
 You can specify `dateFilter` parameter to filter documents you want export. Filter condition is
 composed from 3 fields: `field`, `format` and `value`.
 
@@ -91,6 +96,7 @@ to *date* function to create final value which will be used to filter documents.
 [MongoDB Extractor](https://help.keboola.com/extractors/database/mongodb/mapping/) or
 [Generic Extractor](https://developers.keboola.com/extend/generic-extractor/configuration/config/mappings/) 
 
-## General filtering options
+## Links
 
-tbd
+- [Scanning a Table](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SQLtoNoSQL.ReadData.Scan.html)
+- [DynamoDB Scan operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html)
