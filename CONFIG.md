@@ -79,7 +79,7 @@ to *date* function to create final value which will be used to filter documents.
 
 #### Example
 
-(for date `2018-03-13 19:00:00`)
+(for date `2018-03-13 18:00:00`)
 
 |field|format|value|composed condition|
 |---|---|---|---|
