@@ -57,9 +57,11 @@ JSON
         ]);
 
         $expectedFile = $this->dataDir . '/out/tables/10-movies.csv';
+        $expectedManifestFile = $expectedFile . '.manifest';
 
         $this->assertSame(0, $exitCode);
         $this->assertFileExists($expectedFile);
+        $this->assertFileExists($expectedManifestFile);
 
         $expectedCsv = <<<CSV
 "title","year","rating"
@@ -75,5 +77,10 @@ JSON
 "World War Z","2013","7.1"\n
 CSV;
         $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
+
+        $expectedManifest = <<<JSON
+{"destination":"","primary_key":[],"delimiter":",","enclosure":"\"","columns":[],"incremental":true,"metadata":[],"column_metadata":[]}\n
+JSON;
+        $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }
 }

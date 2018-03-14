@@ -29,7 +29,7 @@ class RunWithFilterExpressionTest extends ExtractorTestCase
         "name": "10-movies",
         "table": "Movies",
         "enabled": true,
-        "incremental": true,
+        "incremental": false,
         "dateFilter": {
           "field": "year",
           "format": "Y",
@@ -63,9 +63,11 @@ JSON
         ]);
 
         $expectedFile = $this->dataDir . '/out/tables/10-movies.csv';
+        $expectedManifestFile = $expectedFile . '.manifest';
 
         $this->assertSame(0, $exitCode);
         $this->assertFileExists($expectedFile);
+        $this->assertFileExists($expectedManifestFile);
 
         $expectedCsv = <<<CSV
 "title","year","rating"
@@ -73,5 +75,10 @@ JSON
 "X-Men: Days of Future Past","2014",""\n
 CSV;
         $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
+
+        $expectedManifest = <<<JSON
+{"destination":"","primary_key":[],"delimiter":",","enclosure":"\"","columns":[],"incremental":false,"metadata":[],"column_metadata":[]}\n
+JSON;
+        $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }
 }

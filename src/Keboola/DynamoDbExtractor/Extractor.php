@@ -6,6 +6,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use Nette\Utils\Strings;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Console\Output\OutputInterface;
+use Keboola\Component\Manifest\ManifestManager;
 
 class Extractor
 {
@@ -61,20 +62,28 @@ class Extractor
     {
         $this->validateExports($this->parameters['exports']);
 
+        $manifestManager = new ManifestManager($outputPath);
+
         foreach ($this->parameters['exports'] as $exportOptions) {
             $export = new Exporter($this->dynamoDbClient, $exportOptions, $outputPath, $this->consoleOutput);
 
             if ($export->hasEnabledExport()) {
                 $filename = $export->export();
                 if (file_exists($filename)) {
+                    $webalizedExportName = Strings::webalize($exportOptions['name']);
                     $parser = new Parser(
-                        Strings::webalize($exportOptions['name']),
+                        $webalizedExportName,
                         $filename,
                         $exportOptions['mapping'],
                         $this->consoleOutput
                     );
+
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
+
+                    $manifestManager->writeTableManifestFromArray($outputPath . '/' .$webalizedExportName . '.csv', [
+                        'incremental' => $exportOptions['incremental'],
+                    ]);
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
                 }
