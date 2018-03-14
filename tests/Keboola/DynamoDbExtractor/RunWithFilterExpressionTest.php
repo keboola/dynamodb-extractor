@@ -29,7 +29,7 @@ class RunWithFilterExpressionTest extends ExtractorTestCase
         "name": "10-movies",
         "table": "Movies",
         "enabled": true,
-        "incremental": true,
+        "incremental": false,
         "dateFilter": {
           "field": "year",
           "format": "Y",
