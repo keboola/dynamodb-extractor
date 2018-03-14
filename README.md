@@ -53,4 +53,4 @@ To simulate real run:
 
 ## License
 
-MIT. See [license file.](/license.md)
+Check license file.
