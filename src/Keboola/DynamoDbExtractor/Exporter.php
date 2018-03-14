@@ -62,10 +62,9 @@ class Exporter
         }
 
         if (isset($this->exportOptions['dateFilter'])) {
-            $params = array_merge(
-                $params,
-                $this->createParamsFromDateFilter($this->exportOptions['dateFilter'])
-            );
+            $paramsFromDateFilter = $this->createParamsFromDateFilter($this->exportOptions['dateFilter']);
+            $this->consoleOutput->writeln(json_encode($paramsFromDateFilter));
+            $params = array_merge($params, $paramsFromDateFilter);
         }
 
         $scanLimit = new ScanLimit(1000, $this->exportOptions['limit'] ?? null);
