@@ -81,9 +81,15 @@ class Extractor
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $manifestManager->writeTableManifestFromArray($outputPath . '/' .$webalizedExportName . '.csv', [
+                    $manifestOptions = [
                         'incremental' => $exportOptions['incremental'],
-                    ]);
+                    ];
+
+                    if (isset($exportOptions['primaryKey'])) {
+                        $manifestOptions['primary_key'] = $exportOptions['primaryKey'];
+                    }
+
+                    $manifestManager->writeTableManifestFromArray($outputPath . '/' .$webalizedExportName . '.csv', $manifestOptions);
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
                 }

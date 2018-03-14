@@ -30,6 +30,7 @@ class RunFullExportTest extends ExtractorTestCase
         "table": "Movies",
         "enabled": true,
         "incremental": true,
+        "primaryKey": ["title", "year"],
         "mapping": {
           "title": "title",
           "year": "year",
@@ -79,7 +80,7 @@ CSV;
         $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
 
         $expectedManifest = <<<JSON
-{"destination":"","primary_key":[],"delimiter":",","enclosure":"\"","columns":[],"incremental":true,"metadata":[],"column_metadata":[]}\n
+{"destination":"","primary_key":["title","year"],"delimiter":",","enclosure":"\"","columns":[],"incremental":true,"metadata":[],"column_metadata":[]}\n
 JSON;
         $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }
