@@ -81,14 +81,9 @@ class Extractor
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $manifestManager->writeTableManifest(
-                        $outputPath . '/' .$webalizedExportName . '.csv',
-                        '',
-                        [],
-                        [],
-                        $exportOptions['incremental']
-                    );
-
+                    $manifestManager->writeTableManifestFromArray($outputPath . '/' .$webalizedExportName . '.csv', [
+                        'incremental' => $exportOptions['incremental'],
+                    ]);
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
                 }
