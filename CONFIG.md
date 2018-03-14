@@ -19,6 +19,7 @@
         "index": "Movies_SomeIndex",
         "enabled": true,
         "incremental": true,
+        "primaryKey": ["title", "year"],
         "dateFilter": {
           "field": "year",
           "format": "Y",
@@ -51,6 +52,7 @@
     - `index`: (optional) name of the index to export from
     - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
+    - `primaryKey`: primary key to set on imported table
     - `dateFilter` (optional): how to filter scanned documents
         - `field`: field name in document by which you want to filter
         - `format`: date format (e.g. `Y-m-d` for date or `Y` for year)
