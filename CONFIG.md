@@ -73,9 +73,9 @@ Extractor uses `Scan` operation to selecting documents from DynamoDB.
 You can specify `dateFilter` parameter to filter documents you want export. Filter condition is
 composed from 3 fields: `field`, `format` and `value`.
 
-The `value` field is passed to *strtotime* function. Then the `format` and `value` fields are passed
-to *date* function to create final value which will be used to filter documents. Something like
-`date($format, strtotime($value))`.
+The `value` field is passed to [**strtotime**](https://secure.php.net/strtotime) function. Then the
+`format` and `value` fields are passed to [**date**](https://secure.php.net/date) function to create
+final value which will be used to filter documents. Something like `date($format, strtotime($value))`.
 
 #### Example
 
