@@ -9,7 +9,7 @@ Docker application for exporting data from Amazon DynamoDB.
 
 ## Configuration
 
-Sample configuration and its description can be found [here](/config.md).
+Sample configuration and its description can be found [here](/CONFIG.md).
 
 ## Output
 
