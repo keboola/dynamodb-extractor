@@ -2,6 +2,8 @@
 
 ## Sample
 
+*Note: when copying to UI, please make sure you copy content of `parameters` key only.*
+
 ```json
 {
   "parameters": {
@@ -52,7 +54,7 @@
     - `index`: (optional) name of the index to export from
     - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
-    - `primaryKey`: primary key to set on imported table
+    - `primaryKey`: primary key to set on imported table, defined as array
     - `dateFilter` (optional): how to filter scanned documents
         - `field`: field name in document by which you want to filter
         - `format`: date format (e.g. `Y-m-d` for date or `Y` for year)
@@ -61,7 +63,7 @@
     - `mapping`: how to map fields in document to CSV columns
 
 
-### `dateFilter` and its fields
+### `dateFilter`
 
 You can specify `dateFilter` parameter to filter documents you want export. Filter condition is
 composed from 3 fields: `field`, `format` and `value`.
@@ -81,12 +83,14 @@ to *date* function to create final value which will be used to filter documents.
 |`createdTime`|`Y-m-d H:i:s`|`-10 hours`|`createdTime >= 2018-03-13 08:00:00`|
 |`createdTime`|`Y-m-d`|`2018-01-01`|`createdTime >= 2018-01-01`|
 
-### `mapping` and its fields
+### `mapping`
 
-tbd
+- [php-csvmap](https://github.com/keboola/php-csvmap) library is used to parse exported documents
+- in most cases you'll be happy with simple `"some.path.key": "destination"` mapping
+- for advanced usages please check documentation of mapping sections of in
+[MongoDB Extractor](https://help.keboola.com/extractors/database/mongodb/mapping/) or
+[Generic Extractor](https://developers.keboola.com/extend/generic-extractor/configuration/config/mappings/) 
 
 ## General filtering options
 
 tbd
-
-## Links
