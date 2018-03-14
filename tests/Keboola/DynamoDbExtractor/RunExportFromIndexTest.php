@@ -5,7 +5,7 @@ namespace Keboola\DynamoDbExtractor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RunFullExportTest extends ExtractorTestCase
+class RunExportFromIndexTest extends ExtractorTestCase
 {
     /** @var string */
     protected $dataDir = '/tmp/run-export-from-index';
