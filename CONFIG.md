@@ -1,4 +1,4 @@
-# Configuration
+# Configuring in Keboola Connection UI
 
 ## Sample
 
