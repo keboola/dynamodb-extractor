@@ -2,40 +2,40 @@
 
 ## Sample
 
-*Note: when copying to UI, please make sure you copy content of `parameters` key only.*
 
 ```json
 {
-  "parameters": {
-    "db": {
-      "endpoint": "endpoint",
-      "accessKeyId": "access key id",
-      "#secretAccessKey": "secret access key",
-      "regionName": "eu-central-1"
-    },
-    "exports": [
-      {
-        "id": 1,
-        "name": "my-movies",
-        "table": "Movies",
-        "index": "Movies_SomeIndex",
-        "enabled": true,
-        "incremental": true,
-        "primaryKey": ["title", "year"],
-        "dateFilter": {
-          "field": "year",
-          "format": "Y",
-          "value": "2014-01-01"
-        },
-        "limit": 100,
-        "mapping": {
-          "title": "title",
-          "year": "year",
-          "info.rating": "rating"
-        }
+  "db": {
+    "endpoint": "endpoint",
+    "accessKeyId": "access key id",
+    "#secretAccessKey": "secret access key",
+    "regionName": "eu-central-1"
+  },
+  "exports": [
+    {
+      "id": 1,
+      "name": "my-movies",
+      "table": "Movies",
+      "index": "Movies_SomeIndex",
+      "enabled": true,
+      "incremental": true,
+      "primaryKey": [
+        "title",
+        "year"
+      ],
+      "dateFilter": {
+        "field": "year",
+        "format": "Y",
+        "value": "2014-01-01"
+      },
+      "limit": 100,
+      "mapping": {
+        "title": "title",
+        "year": "year",
+        "info.rating": "rating"
       }
-    ]
-  }
+    }
+  ]
 }
 ```
 
