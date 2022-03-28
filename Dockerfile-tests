@@ -1,4 +1,5 @@
 FROM keboola/dynamodb-extractor
 
-RUN pecl install xdebug \
+RUN pecl channel-update pecl.php.net \
+  &&  pecl install xdebug \
   && docker-php-ext-enable xdebug
