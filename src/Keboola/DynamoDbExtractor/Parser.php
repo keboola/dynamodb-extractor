@@ -2,6 +2,7 @@
 
 namespace Keboola\DynamoDbExtractor;
 
+use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\CsvMap\Mapper;
 use Nette\Utils\Strings;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,6 +37,7 @@ class Parser
 
     /**
      * Parses json using Mapper and writes output to CSV files
+     * @throws \Keboola\DynamoDbExtractor\UserException|\Keboola\Csv\Exception
      */
     public function parseAndWriteCsvFiles()
     {
@@ -48,7 +50,11 @@ class Parser
             $data = trim($line) !== '' ? [json_decode($line)] : [];
 
             $parser = new Mapper($this->mapping, $this->name);
-            $parser->parse($data);
+            try {
+                $parser->parse($data);
+            } catch (BadDataException $e) {
+                throw new UserException($e->getMessage());
+            }
 
             $this->write($parser->getCsvFiles());
         }
