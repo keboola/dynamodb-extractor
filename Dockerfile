@@ -1,8 +1,8 @@
-FROM php:7.1
+FROM php:7.2
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -q \
-  && apt-get install unzip git -y --no-install-recommends \
+  && apt-get install unzip wait-for-it git -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root

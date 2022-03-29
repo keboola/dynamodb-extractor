@@ -1,4 +1,4 @@
-version: "2"
+version: "3.8"
 
 services:
 
@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile-tests
     links:
       - dynamodb
-    command: sh -c 'php ./init.php && ./tests.sh'
+    command: sh -c 'wait-for-it -t 100 dynamodb:8000 && php ./init.php && ./tests.sh'
 
   app-tests-with-report:
     build:
@@ -38,4 +38,7 @@ services:
       - ./.git:/code/.git
 
   dynamodb:
-    image: quay.io/keboola/dynamodb-extractor-dynamodb
+    image: amazon/dynamodb-local:1.18.0
+    ports:
+      - '8000:8000'
+
