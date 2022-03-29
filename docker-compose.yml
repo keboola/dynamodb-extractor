@@ -22,21 +22,6 @@ services:
       - dynamodb
     command: sh -c 'wait-for-it -t 100 dynamodb:8000 && php ./init.php && ./tests.sh'
 
-  app-tests-with-report:
-    build:
-      context: .
-      dockerfile: Dockerfile-tests
-    links:
-      - dynamodb
-    command: >
-             sh -c '
-             php ./init.php
-             && ./tests.sh
-             && ./vendor/bin/test-reporter
-             '
-    volumes:
-      - ./.git:/code/.git
-
   dynamodb:
     image: amazon/dynamodb-local:1.18.0
     ports:
