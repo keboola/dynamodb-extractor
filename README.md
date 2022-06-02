@@ -51,8 +51,4 @@ To simulate real run:
 
 ## License
 
-Check license file.
-
-## License
-
 MIT licensed, see [LICENSE](./LICENSE) file.
