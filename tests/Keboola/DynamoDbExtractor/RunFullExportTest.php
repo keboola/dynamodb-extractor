@@ -81,16 +81,7 @@ CSV;
         $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
 
         $expectedManifest = <<<JSON
-{
-    "destination":"",
-    "primary_key":["title","year"],
-    "delimiter":",",
-    "enclosure":"\"",
-    "columns":[],
-    "incremental":true,
-    "metadata":[],
-    "column_metadata":[]
-}
+{"primary_key":["title","year"],"incremental":true}
 JSON;
         $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }

@@ -67,6 +67,7 @@ class Extractor
                 if (file_exists($filename)) {
                     $webalizedExportName = Strings::webalize($exportOptions['name']);
                     $parser = new Parser(
+                        $webalizedExportName,
                         $filename,
                         $exportOptions['mapping'],
                         $this->consoleOutput
@@ -83,7 +84,7 @@ class Extractor
                     }
 
                     $manifestManager->writeTableManifest(
-                        $outputPath . '/' .$webalizedExportName . '.csv',
+                        $webalizedExportName . '.csv',
                         $manifestOptions
                     );
                 } else {

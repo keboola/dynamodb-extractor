@@ -14,6 +14,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Parser
 {
+    private string $name;
+
     private string $filename;
 
     private array $mapping;
@@ -22,8 +24,9 @@ class Parser
 
     private Filesystem $filesystem;
 
-    public function __construct(string $filename, array $mapping, OutputInterface $output)
+    public function __construct(string $name, string $filename, array $mapping, OutputInterface $output)
     {
+        $this->name = $name;
         $this->filename = $filename;
         $this->mapping = $mapping;
         $this->consoleOutput = $output;
@@ -51,7 +54,7 @@ class Parser
                 $data = [json_decode($line)];
             }
 
-            $parser = new Mapper($this->mapping);
+            $parser = new Mapper($this->mapping, true, $this->name);
             try {
                 $parser->parse($data);
             } catch (BadDataException $e) {

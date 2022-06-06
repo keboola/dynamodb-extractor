@@ -17,8 +17,6 @@ class Exporter
 
     private array $exportOptions;
 
-    private string $outputPath;
-
     private OutputInterface $consoleOutput;
 
     private Filesystem $filesystem;
@@ -33,11 +31,10 @@ class Exporter
     ) {
         $this->dynamoDbClient = $dynamoDbClient;
         $this->exportOptions = $exportOptions;
-        $this->outputPath = $outputPath;
         $this->consoleOutput = $output;
 
         $this->filesystem = new Filesystem;
-        $this->filename = $this->outputPath . '/' . Strings::webalize($this->exportOptions['name']) . '.json';
+        $this->filename = $outputPath . '/out/tables/' . Strings::webalize($this->exportOptions['name']) . '.json';
     }
 
     /**

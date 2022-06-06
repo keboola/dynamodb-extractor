@@ -29,6 +29,7 @@
     "scripts": {
         "tests-phpunit": "phpunit",
         "tests": [
+            "php ./init.php",
             "@tests-phpunit"
         ],
 

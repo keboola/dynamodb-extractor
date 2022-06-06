@@ -61,7 +61,7 @@ class RunCommand extends Command
                     $output->write((string) json_encode($result));
                     break;
                 case 'run':
-                    $extractor->actionRun($outputPath);
+                    $extractor->actionRun(strval($dataDirectory));
                     break;
                 default:
                     $output->writeln('Action "' . $action . '" not supported');
