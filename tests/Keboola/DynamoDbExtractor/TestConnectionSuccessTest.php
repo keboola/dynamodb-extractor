@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,10 +9,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class TestConnectionSuccessTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/test-connection';
+    protected string $dataDir = '/tmp/test-connection';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -30,7 +31,7 @@ JSON
         );
     }
 
-    public function testConnection()
+    public function testConnection(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -50,6 +51,6 @@ JSON
         ];
 
         $this->assertSame(0, $exitCode);
-        $this->assertSame($expected, \json_decode($output, true));
+        $this->assertSame($expected, json_decode($output, true));
     }
 }

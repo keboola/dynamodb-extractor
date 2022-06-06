@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-abstract class ExtractorTestCase extends \PHPUnit_Framework_TestCase
+abstract class ExtractorTestCase extends TestCase
 {
-    /** @var Filesystem */
-    protected $fs;
+    protected Filesystem $fs;
 
-    /** @var string */
-    protected $dataDir;
+    protected string $dataDir;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         ini_set('error_log', '/code/error.log');
 
@@ -21,7 +22,7 @@ abstract class ExtractorTestCase extends \PHPUnit_Framework_TestCase
         $this->fs->mkdir($this->dataDir);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         ini_set('error_log', '');
 

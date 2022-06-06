@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,10 +9,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DuplicateExportNamesTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/duplicate-export-names';
+    protected string $dataDir = '/tmp/duplicate-export-names';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -49,7 +50,7 @@ JSON
         );
     }
 
-    public function testDuplicateExportNames()
+    public function testDuplicateExportNames(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -65,7 +66,7 @@ JSON
         $this->assertSame(1, $exitCode);
     }
 
-    public function testDuplicateExportNamesTestMode()
+    public function testDuplicateExportNamesTestMode(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage('Please remove duplicate export names');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,10 +9,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RunExportFromIndexTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/run-export-from-index';
+    protected string $dataDir = '/tmp/run-export-from-index';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -44,7 +45,7 @@ JSON
         );
     }
 
-    public function testRun()
+    public function testRun(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -81,7 +82,16 @@ CSV;
         $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
 
         $expectedManifest = <<<JSON
-{"destination":"","primary_key":[],"delimiter":",","enclosure":"\"","columns":[],"incremental":true,"metadata":[],"column_metadata":[]}\n
+{
+    "destination":"",
+    "primary_key":[],
+    "delimiter":",",
+    "enclosure":"\"",
+    "columns":[],
+    "incremental":true,
+    "metadata":[],
+    "column_metadata":[]
+}
 JSON;
         $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require __DIR__ . '/vendor/autoload.php';
 
 use Aws\DynamoDb\DynamoDbClient;
@@ -16,7 +18,7 @@ $dynamoDb = new DynamoDbClient([
         'secret' => 'secret',
     ],
     'region' => 'eu-central-1',
-    'version' => '2012-08-10'
+    'version' => '2012-08-10',
 ]);
 
 try {
@@ -24,7 +26,7 @@ try {
         'TableName' => 'Movies',
     ]);
     $consoleOutput->writeln('Table deleted.');
-} catch (Exception $e) {
+} catch (Throwable $e) {
     $consoleOutput->writeln('Table not deleted.');
 }
 
@@ -37,7 +39,7 @@ $params = [
         ],
         [
             'AttributeName' => 'title',
-            'KeyType' => 'RANGE'
+            'KeyType' => 'RANGE',
         ],
     ],
     'AttributeDefinitions' => [
@@ -81,7 +83,7 @@ $params = [
 try {
     $result = $dynamoDb->createTable($params);
     echo 'Created table.  Status: ' .
-        $result['TableDescription']['TableStatus'] ."\n";
+        $result['TableDescription']['TableStatus'] . "\n";
 
     $marshaler = new Marshaler();
 
@@ -93,11 +95,11 @@ try {
 
         $params = [
             'TableName' => 'Movies',
-            'Item' => $marshaler->marshalJson($json)
+            'Item' => $marshaler->marshalJson($json),
         ];
 
         $result = $dynamoDb->putItem($params);
-        echo "Added movie: " . $movie['year'] . " " . $movie['title'] . "\n";
+        echo 'Added movie: ' . $movie['year'] . ' ' . $movie['title'] . "\n";
     }
 } catch (DynamoDbException $e) {
     echo "Error:\n";

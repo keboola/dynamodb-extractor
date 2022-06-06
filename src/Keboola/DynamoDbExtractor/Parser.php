@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Keboola\CsvMap\Exception\BadDataException;
@@ -10,21 +12,20 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Parser
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $filename;
+    private string $filename;
 
-    /** @var array */
-    private $mapping;
+    /** @var array<string, mixed> */
+    private array $mapping;
 
-    /** @var OutputInterface */
-    private $consoleOutput;
+    private OutputInterface $consoleOutput;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
+    /**
+     * @param array<string, mixed> $mapping
+     */
     public function __construct(string $name, string $filename, array $mapping, OutputInterface $output)
     {
         $this->name = $name;
@@ -39,7 +40,7 @@ class Parser
      * Parses json using Mapper and writes output to CSV files
      * @throws \Keboola\DynamoDbExtractor\UserException|\Keboola\Csv\Exception
      */
-    public function parseAndWriteCsvFiles()
+    public function parseAndWriteCsvFiles(): void
     {
         $this->consoleOutput->writeln('Parsing "' . $this->filename . '"');
 
@@ -64,9 +65,9 @@ class Parser
 
     /**
      * Writes CSV files to filesystem
-     * @param array $csvFiles
+     * @param array<string, mixed> $csvFiles
      */
-    private function write(array $csvFiles)
+    private function write(array $csvFiles): void
     {
         foreach ($csvFiles as $file) {
             $name = Strings::webalize($file->getName());

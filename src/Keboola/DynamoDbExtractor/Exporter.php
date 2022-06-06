@@ -1,34 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Aws\DynamoDb\Marshaler;
 use Nette\Utils\Strings;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Exporter
 {
-    /** @var DynamoDbClient */
-    private $dynamoDbClient;
+    private DynamoDbClient $dynamoDbClient;
 
-    /** @var array */
-    private $exportOptions;
+    /** @var mixed[]  */
+    private array $exportOptions;
 
-    /** @var string */
-    private $outputPath;
+    private string $outputPath;
 
-    /** @var OutputInterface  */
-    private $consoleOutput;
+    private OutputInterface $consoleOutput;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
-    /** @var string */
-    private $filename;
+    private string $filename;
 
+    /**
+     * @param array<string, mixed> $exportOptions
+     */
     public function __construct(
         DynamoDbClient $dynamoDbClient,
         array $exportOptions,
@@ -46,7 +46,6 @@ class Exporter
 
     /**
      * Exports table from DynamoDb
-     * @return string
      * @throws UserException
      */
     public function export(): string
@@ -79,7 +78,7 @@ class Exporter
                 $scanLimit->decreaseLimit($response['Count']);
 
                 foreach ($response['Items'] as $item) {
-                    $json = \json_encode($marshaler->unmarshalItem($item));
+                    $json = json_encode($marshaler->unmarshalItem($item));
                     FileHelper::appendContentToFile($this->filename, $json . "\n");
                 }
             } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
@@ -96,7 +95,6 @@ class Exporter
 
     /**
      * Returns if export is enabled or not
-     * @return bool
      */
     public function hasEnabledExport(): bool
     {
@@ -106,15 +104,15 @@ class Exporter
     /**
      * Deletes exported json
      */
-    public function cleanup()
+    public function cleanup(): void
     {
         $this->filesystem->remove($this->filename);
     }
 
     /**
      * Creates filtering params from date filter
-     * @param array $dateFilter
-     * @return array
+     * @param array<string, mixed> $dateFilter
+     * @return array<string, mixed>
      */
     private function createParamsFromDateFilter(array $dateFilter): array
     {
@@ -125,9 +123,9 @@ class Exporter
             ],
             'ExpressionAttributeValues' => [
                 ':value' => [
-                    'S' => date($dateFilter['format'], strtotime($dateFilter['value']))
-                ]
-            ]
+                    'S' => date($dateFilter['format'], strtotime($dateFilter['value'])),
+                ],
+            ],
         ];
     }
 }

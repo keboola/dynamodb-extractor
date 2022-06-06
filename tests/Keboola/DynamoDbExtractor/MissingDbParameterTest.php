@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -8,10 +10,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class MissingDbParameterTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/missing-db-params';
+    protected string $dataDir = '/tmp/missing-db-params';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +30,7 @@ JSON
         );
     }
 
-    public function testMissingDbParameter()
+    public function testMissingDbParameter(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -43,13 +44,13 @@ JSON
         ]);
 
         $this->assertSame(1, $exitCode);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'The child node "endpoint" at path "parameters.db" must be configured',
             $commandTester->getDisplay()
         );
     }
 
-    public function testMissingDbParameterTestMode()
+    public function testMissingDbParameterTestMode(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The child node "endpoint" at path "parameters.db" must be configured');
