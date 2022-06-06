@@ -82,7 +82,7 @@ jobs:
         name: Run tests
         run: |
           docker-compose run wait
-          docker-compose run --rm app-tests composer ci
+          docker-compose run --rm app composer ci
 
   tests-in-kbc:
     needs: build
