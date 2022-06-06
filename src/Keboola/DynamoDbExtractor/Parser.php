@@ -1,29 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\CsvMap\Mapper;
+use Keboola\CsvTable\Table;
 use Nette\Utils\Strings;
+use SplFileInfo;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Parser
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $filename;
+    private string $filename;
 
-    /** @var array */
-    private $mapping;
+    private array $mapping;
 
-    /** @var OutputInterface */
-    private $consoleOutput;
+    private OutputInterface $consoleOutput;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(string $name, string $filename, array $mapping, OutputInterface $output)
     {
@@ -39,17 +38,23 @@ class Parser
      * Parses json using Mapper and writes output to CSV files
      * @throws \Keboola\DynamoDbExtractor\UserException|\Keboola\Csv\Exception
      */
-    public function parseAndWriteCsvFiles()
+    public function parseAndWriteCsvFiles(): void
     {
         $this->consoleOutput->writeln('Parsing "' . $this->filename . '"');
 
         $handle = fopen($this->filename, 'r');
+        if (!$handle) {
+            return;
+        }
 
         while (!feof($handle)) {
-            $line = fgets($handle);
-            $data = trim($line) !== '' ? [json_decode($line)] : [];
+            $line = (string) fgets($handle);
+            $data = [];
+            if (trim($line) !== '') {
+                $data = [json_decode($line)];
+            }
 
-            $parser = new Mapper($this->mapping, $this->name);
+            $parser = new Mapper($this->mapping, true, $this->name);
             try {
                 $parser->parse($data);
             } catch (BadDataException $e) {
@@ -64,15 +69,15 @@ class Parser
 
     /**
      * Writes CSV files to filesystem
-     * @param array $csvFiles
      */
-    private function write(array $csvFiles)
+    private function write(array $csvFiles): void
     {
         foreach ($csvFiles as $file) {
+            /** @var Table $file */
             $name = Strings::webalize($file->getName());
             $outputCsv = dirname($this->filename). '/' . $name . '.csv';
 
-            $content = file_get_contents($file->getPathname());
+            $content = (string) file_get_contents($file->getPathname());
 
             // csv-map doesn't have option to skip header yet,
             // so we skip header if file exists

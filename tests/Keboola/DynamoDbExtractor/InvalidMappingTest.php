@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,8 +9,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class InvalidMappingTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/run';
+    protected string $dataDir = '/tmp/run';
 
     protected function setUp(): void
     {
@@ -54,11 +55,10 @@ JSON
             'data directory' => $this->dataDir,
         ]);
 
-
         $this->assertSame(1, $exitCode);
         $output = $commandTester->getDisplay();
-        $this->assertContains(
-            'Error writing \'info\' column: Cannot write object into a column',
+        $this->assertStringContainsString(
+            'Error writing \'info\' column: Cannot write data into column:',
             $output
         );
     }

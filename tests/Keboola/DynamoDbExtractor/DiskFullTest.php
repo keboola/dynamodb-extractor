@@ -1,23 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 class DiskFullTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/disk-full';
+    protected string $dataDir = '/tmp/disk-full';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         // simulate full disk
         $this->fs->mkdir($this->dataDir . '/out/tables');
-        $process = new Process('ln -s /dev/full ' . $this->dataDir . '/out/tables/10-movies.json');
+        $process = Process::fromShellCommandline(
+            'ln -s /dev/full ' . $this->dataDir . '/out/tables/10-movies.json'
+        );
         $process->mustRun();
 
         $this->fs->dumpFile($this->dataDir . '/config.json', <<<JSON
@@ -49,7 +53,7 @@ JSON
         );
     }
 
-    public function testDiskFull()
+    public function testDiskFull(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -64,17 +68,17 @@ JSON
 
         $this->assertSame(2, $exitCode);
 
-        $this->assertContains(
-            'possibly out of free disk space',
-            file_get_contents('/code/error.log')
+        $this->assertStringContainsString(
+            'No space left on device',
+            (string) file_get_contents('/code/error.log')
         );
     }
 
-    public function testDiskFullTestMode()
+    public function testDiskFullTestMode(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Throwable::class);
         $this->expectExceptionMessage('app-errors.ERROR: file_put_contents(): Only');
-        $this->expectExceptionMessage('possibly out of free disk space');
+        $this->expectExceptionMessage('No space left on device');
 
         $application = new Application;
         $application->add(new RunCommand);

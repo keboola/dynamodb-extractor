@@ -11,16 +11,27 @@ services:
       - dynamodb
     command: bash
     volumes:
-      - ./:/code
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
 
   app-tests:
     build:
       context: .
       dockerfile: Dockerfile-tests
+    depends_on:
+      - app
     links:
       - dynamodb
-    command: sh -c 'wait-for-it -t 100 dynamodb:8000 && php ./init.php && ./tests.sh'
+    volumes:
+      - ./:/code
+      - ./data:/data
+
+  wait:
+    image: waisbrot/wait
+    depends_on:
+      - dynamodb
+    environment:
+      - TARGETS=dynamodb:8000
+      - TIMEOUT=200
 
   dynamodb:
     image: amazon/dynamodb-local:1.18.0

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,10 +9,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class UnknownActionTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/unknown-action';
+    protected string $dataDir = '/tmp/unknown-action';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -30,7 +31,7 @@ JSON
         );
     }
 
-    public function testUnknownAction()
+    public function testUnknownAction(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -44,6 +45,6 @@ JSON
         ]);
 
         $this->assertSame(0, $exitCode);
-        $this->assertContains('Action "unknown-action" not supported', $commandTester->getDisplay());
+        $this->assertStringContainsString('Action "unknown-action" not supported', $commandTester->getDisplay());
     }
 }

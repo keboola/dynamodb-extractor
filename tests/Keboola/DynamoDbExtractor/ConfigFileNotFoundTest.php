@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Throwable;
 
 class ConfigFileNotFoundTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/config-file-not-found';
+    protected string $dataDir = '/tmp/config-file-not-found';
 
-    public function testConfigFileNotFound()
+    public function testConfigFileNotFound(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -25,15 +27,15 @@ class ConfigFileNotFoundTest extends ExtractorTestCase
 
         $this->assertSame(2, $exitCode);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'app-errors.ERROR: Config file not found at path /tmp/config-file-not-found/config.json',
-            file_get_contents('/code/error.log')
+            (string) file_get_contents('/code/error.log')
         );
     }
 
-    public function testConfigFileNotFoundTestMode()
+    public function testConfigFileNotFoundTestMode(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Throwable::class);
         $this->expectExceptionMessage('Config file not found');
 
         $application = new Application;

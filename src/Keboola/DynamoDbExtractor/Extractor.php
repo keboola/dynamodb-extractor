@@ -1,23 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Keboola\Component\Manifest\ManifestManager;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
 use Nette\Utils\Strings;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Console\Output\OutputInterface;
-use Keboola\Component\Manifest\ManifestManager;
 
 class Extractor
 {
-    /** @var array */
-    private $parameters;
+    private array $parameters;
 
-    /** @var DynamoDbClient */
-    private $dynamoDbClient;
+    private DynamoDbClient $dynamoDbClient;
 
-    /** @var OutputInterface */
-    private $consoleOutput;
+    private OutputInterface $consoleOutput;
 
     public function __construct(array $config, OutputInterface $output)
     {
@@ -37,27 +37,22 @@ class Extractor
                 'secret' => $this->parameters['db']['#secretAccessKey'],
             ],
             'region' => $this->parameters['db']['regionName'],
-            'version' => '2012-08-10'
+            'version' => '2012-08-10',
         ]);
     }
 
     /**
      * Tests connection to database by listing tables
-     * @return array
      */
     public function actionTestConnection(): array
     {
         $this->dynamoDbClient->listTables();
 
         return [
-            'status' => 'ok'
+            'status' => 'ok',
         ];
     }
 
-    /**
-     * Runs data extraction
-     * @param string $outputPath
-     */
     public function actionRun(string $outputPath): void
     {
         $this->validateExports($this->parameters['exports']);
@@ -81,15 +76,17 @@ class Extractor
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $manifestOptions = [
-                        'incremental' => $exportOptions['incremental'],
-                    ];
+                    $manifestOptions = new OutTableManifestOptions();
+                    $manifestOptions->setIncremental($exportOptions['incremental']);
 
                     if (isset($exportOptions['primaryKey'])) {
-                        $manifestOptions['primary_key'] = $exportOptions['primaryKey'];
+                        $manifestOptions->setPrimaryKeyColumns($exportOptions['primaryKey']);
                     }
 
-                    $manifestManager->writeTableManifestFromArray($outputPath . '/' .$webalizedExportName . '.csv', $manifestOptions);
+                    $manifestManager->writeTableManifest(
+                        $webalizedExportName . '.csv',
+                        $manifestOptions
+                    );
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
                 }
@@ -99,7 +96,6 @@ class Extractor
 
     /**
      * Validates exports
-     * @param array $exports
      * @throws UserException
      */
     private function validateExports(array $exports): void
@@ -123,11 +119,9 @@ class Extractor
 
     /**
      * Validates export's "dateFilter"
-     * @param array $dateFilter
-     * @param string $exportName
      * @throws UserException
      */
-    private function validateDateFilter(array $dateFilter, string $exportName)
+    private function validateDateFilter(array $dateFilter, string $exportName): void
     {
         if (!isset($dateFilter['field'], $dateFilter['format'], $dateFilter['value'])) {
             throw new UserException(

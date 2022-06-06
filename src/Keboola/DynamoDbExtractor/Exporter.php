@@ -1,33 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Aws\DynamoDb\Marshaler;
 use Nette\Utils\Strings;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Exporter
 {
-    /** @var DynamoDbClient */
-    private $dynamoDbClient;
+    private DynamoDbClient $dynamoDbClient;
 
-    /** @var array */
-    private $exportOptions;
+    private array $exportOptions;
 
-    /** @var string */
-    private $outputPath;
+    private OutputInterface $consoleOutput;
 
-    /** @var OutputInterface  */
-    private $consoleOutput;
+    private Filesystem $filesystem;
 
-    /** @var Filesystem */
-    private $filesystem;
-
-    /** @var string */
-    private $filename;
+    private string $filename;
 
     public function __construct(
         DynamoDbClient $dynamoDbClient,
@@ -37,16 +31,14 @@ class Exporter
     ) {
         $this->dynamoDbClient = $dynamoDbClient;
         $this->exportOptions = $exportOptions;
-        $this->outputPath = $outputPath;
         $this->consoleOutput = $output;
 
         $this->filesystem = new Filesystem;
-        $this->filename = $this->outputPath . '/' . Strings::webalize($this->exportOptions['name']) . '.json';
+        $this->filename = $outputPath . '/out/tables/' . Strings::webalize($this->exportOptions['name']) . '.json';
     }
 
     /**
      * Exports table from DynamoDb
-     * @return string
      * @throws UserException
      */
     public function export(): string
@@ -63,7 +55,7 @@ class Exporter
 
         if (isset($this->exportOptions['dateFilter'])) {
             $paramsFromDateFilter = $this->createParamsFromDateFilter($this->exportOptions['dateFilter']);
-            $this->consoleOutput->writeln(json_encode($paramsFromDateFilter));
+            $this->consoleOutput->writeln((string) json_encode($paramsFromDateFilter));
             $params = array_merge($params, $paramsFromDateFilter);
         }
 
@@ -75,17 +67,18 @@ class Exporter
                     $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
                 }
                 $params['Limit'] = $scanLimit->getBatchSize();
-                $response = $this->dynamoDbClient->scan($params);
+                $response = $this->dynamoDbClient->scan($params)->toArray();
                 $scanLimit->decreaseLimit($response['Count']);
 
-                foreach ($response['Items'] as $item) {
-                    $json = \json_encode($marshaler->unmarshalItem($item));
+                /** @var array $item */
+                foreach ((array) $response['Items'] as $item) {
+                    $json = json_encode($marshaler->unmarshalItem($item));
                     FileHelper::appendContentToFile($this->filename, $json . "\n");
                 }
             } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
         } catch (DynamoDbException $e) {
-            if ($e->getStatusCode() !== null && strpos($e->getStatusCode(), '4') === 0) {
-                throw new UserException($e->getAwsErrorCode());
+            if ($e->getStatusCode() !== null && substr((string) $e->getStatusCode(), 0, 1) === '4') {
+                throw new UserException((string) $e->getAwsErrorCode());
             } else {
                 throw $e;
             }
@@ -96,7 +89,6 @@ class Exporter
 
     /**
      * Returns if export is enabled or not
-     * @return bool
      */
     public function hasEnabledExport(): bool
     {
@@ -106,15 +98,13 @@ class Exporter
     /**
      * Deletes exported json
      */
-    public function cleanup()
+    public function cleanup(): void
     {
         $this->filesystem->remove($this->filename);
     }
 
     /**
      * Creates filtering params from date filter
-     * @param array $dateFilter
-     * @return array
      */
     private function createParamsFromDateFilter(array $dateFilter): array
     {
@@ -125,9 +115,9 @@ class Exporter
             ],
             'ExpressionAttributeValues' => [
                 ':value' => [
-                    'S' => date($dateFilter['format'], strtotime($dateFilter['value']))
-                ]
-            ]
+                    'S' => date($dateFilter['format'], strtotime($dateFilter['value'])),
+                ],
+            ],
         ];
     }
 }

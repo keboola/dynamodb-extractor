@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Console\Application;
@@ -7,10 +9,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RunFullExportUnknownTableTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/run-unknown-table';
+    protected string $dataDir = '/tmp/run-unknown-table';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -43,7 +44,7 @@ JSON
         );
     }
 
-    public function testRun()
+    public function testRun(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -57,7 +58,7 @@ JSON
         ]);
 
         $this->assertSame(1, $exitCode);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'ResourceNotFoundException',
             $commandTester->getDisplay()
         );

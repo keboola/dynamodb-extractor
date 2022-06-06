@@ -80,7 +80,9 @@ jobs:
           tag_as_latest: true
       -
         name: Run tests
-        run: docker-compose run --rm app-tests
+        run: |
+          docker-compose run wait
+          docker-compose run --rm app composer ci
 
   tests-in-kbc:
     needs: build

@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
+use Exception;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,11 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Throwable;
 
 class RunCommand extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('run');
         $this->setDescription('Runs extractor');
@@ -23,7 +27,7 @@ class RunCommand extends Command
         $this->addOption('test-mode', null, null, 'Test mode');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dataDirectory = $input->getArgument('data directory');
         $testMode = $input->getOption('test-mode');
@@ -33,16 +37,19 @@ class RunCommand extends Command
             $configFile = $dataDirectory . '/config.json';
 
             if (!file_exists($configFile)) {
-                throw new \Exception('Config file not found at path ' . $configFile);
+                throw new Exception('Config file not found at path ' . $configFile);
             }
 
             $outputPath = $dataDirectory . '/out/tables';
             (new Filesystem())->mkdir($outputPath);
 
-            $jsonDecode = new JsonDecode(true);
-            $config = $jsonDecode->decode(
-                file_get_contents($configFile),
-                JsonEncoder::FORMAT
+            $jsonDecode = new JsonDecode();
+            $config = (array) $jsonDecode->decode(
+                (string) file_get_contents($configFile),
+                JsonEncoder::FORMAT,
+                [
+                    JsonDecode::ASSOCIATIVE => true,
+                ]
             );
 
             $extractor = new Extractor($config, $output);
@@ -51,10 +58,10 @@ class RunCommand extends Command
             switch ($action) {
                 case 'testConnection':
                     $result = $extractor->actionTestConnection();
-                    $output->write(\json_encode($result));
+                    $output->write((string) json_encode($result));
                     break;
                 case 'run':
-                    $extractor->actionRun($outputPath);
+                    $extractor->actionRun(strval($dataDirectory));
                     break;
                 default:
                     $output->writeln('Action "' . $action . '" not supported');
@@ -67,12 +74,12 @@ class RunCommand extends Command
             }
             $output->writeln($e->getMessage());
             return 1;
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             if ($testMode === true) {
                 throw $e;
             }
             $logger->error($e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
             return 2;
         }

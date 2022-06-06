@@ -1,31 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 class ScanLimit
 {
-    /**
-     * The maximum number of items to evaluate (DynamoDB's "Limit" parameter)
-     * @var int
-     */
-    private $batchSize;
+    /** The maximum number of items to evaluate (DynamoDB's "Limit" parameter) */
+    private int $batchSize;
 
-    /**
-     * Number of documents to retrieve
-     * @var int|null
-     */
-    private $limit;
+    /** Number of documents to retrieve */
+    private ?int $limit;
 
-    public function __construct(int $batchSize, int $limit = null)
+    public function __construct(int $batchSize, ?int $limit = null)
     {
         $this->batchSize = $batchSize;
         $this->limit = $limit;
     }
 
-    /**
-     * Decrease limit by specified number. Takes no effect when limit is null
-     * @param int $value
-     */
+    /** Decrease limit by specified number. Takes no effect when limit is null */
     public function decreaseLimit(int $value): void
     {
         if ($this->limit !== null) {
@@ -36,10 +29,7 @@ class ScanLimit
         }
     }
 
-    /**
-     * Gets batch size
-     * @return int
-     */
+    /** Gets batch size */
     public function getBatchSize(): int
     {
         if ($this->limit === null) {
@@ -49,10 +39,7 @@ class ScanLimit
         }
     }
 
-    /**
-     * Gets if scan should continue or not
-     * @return bool
-     */
+    /** Gets if scan should continue or not */
     public function shouldContinue(): bool
     {
         return $this->limit === null || $this->limit > 0;

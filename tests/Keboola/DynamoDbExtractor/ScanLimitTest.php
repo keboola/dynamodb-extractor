@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
-class ScanLimitTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ScanLimitTest extends TestCase
 {
-    public function testLimitNull()
+    public function testLimitNull(): void
     {
         $scanLimit = new ScanLimit(100);
 
@@ -17,7 +21,7 @@ class ScanLimitTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($scanLimit->shouldContinue());
     }
 
-    public function testLimitEqualsBatchSize()
+    public function testLimitEqualsBatchSize(): void
     {
         $scanLimit = new ScanLimit(100, 100);
         $scanLimit->decreaseLimit(100);
@@ -26,7 +30,7 @@ class ScanLimitTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($scanLimit->shouldContinue());
     }
 
-    public function testLimitLessThanBatchSize()
+    public function testLimitLessThanBatchSize(): void
     {
         $scanLimit = new ScanLimit(100, 10);
 
@@ -39,7 +43,7 @@ class ScanLimitTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($scanLimit->shouldContinue());
     }
 
-    public function testLimitGreaterThanBatchSize()
+    public function testLimitGreaterThanBatchSize(): void
     {
         $scanLimit = new ScanLimit(100, 223);
         $scanLimit->decreaseLimit(100);

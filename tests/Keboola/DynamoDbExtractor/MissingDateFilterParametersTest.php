@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\DynamoDbExtractor;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -8,10 +10,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class MissingDateFilterParametersTest extends ExtractorTestCase
 {
-    /** @var string */
-    protected $dataDir = '/tmp/missing-date-filter-parameters';
+    protected string $dataDir = '/tmp/missing-date-filter-parameters';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +49,7 @@ JSON
         );
     }
 
-    public function testMissingDateFilterParameters()
+    public function testMissingDateFilterParameters(): void
     {
         $application = new Application;
         $application->add(new RunCommand);
@@ -62,14 +63,14 @@ JSON
         ]);
 
         $this->assertSame(1, $exitCode);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Please check if "dateFilter" contains all required parameters (field, format and value)'
             . ' in "movies" export',
             $commandTester->getDisplay()
         );
     }
 
-    public function testMissingDateFilterParametersTestMode()
+    public function testMissingDateFilterParametersTestMode(): void
     {
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
