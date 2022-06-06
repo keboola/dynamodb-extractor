@@ -1,8 +1,5 @@
 # DynamoDB Extractor
 
-[![Build Status](https://travis-ci.org/keboola/dynamodb-extractor.svg?branch=master)](https://travis-ci.org/keboola/dynamodb-extractor)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/keboola/dynamodb-extractor/blob/master/LICENSE.md)
-
 Docker application for exporting data from Amazon DynamoDB.
 
 ## Configuration
