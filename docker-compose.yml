@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-tests
+    depends_on:
+      - app
     links:
       - dynamodb
     command: sh -c 'wait-for-it -t 100 dynamodb:8000 && php ./init.php && ./tests.sh'
