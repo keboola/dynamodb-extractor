@@ -29,7 +29,7 @@ class ConfigFileNotFoundTest extends ExtractorTestCase
 
         $this->assertStringContainsString(
             'app-errors.ERROR: Config file not found at path /tmp/config-file-not-found/config.json',
-            file_get_contents('/code/error.log')
+            (string) file_get_contents('/code/error.log')
         );
     }
 

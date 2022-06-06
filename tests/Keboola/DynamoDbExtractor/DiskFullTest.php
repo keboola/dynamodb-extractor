@@ -69,8 +69,8 @@ JSON
         $this->assertSame(2, $exitCode);
 
         $this->assertStringContainsString(
-            'possibly out of free disk space',
-            file_get_contents('/code/error.log')
+            'No space left on device',
+            (string) file_get_contents('/code/error.log')
         );
     }
 
@@ -78,7 +78,7 @@ JSON
     {
         $this->expectException(Throwable::class);
         $this->expectExceptionMessage('app-errors.ERROR: file_put_contents(): Only');
-        $this->expectExceptionMessage('possibly out of free disk space');
+        $this->expectExceptionMessage('No space left on device');
 
         $application = new Application;
         $application->add(new RunCommand);

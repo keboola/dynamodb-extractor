@@ -44,8 +44,8 @@ class RunCommand extends Command
             (new Filesystem())->mkdir($outputPath);
 
             $jsonDecode = new JsonDecode();
-            $config = $jsonDecode->decode(
-                file_get_contents($configFile),
+            $config = (array) $jsonDecode->decode(
+                (string) file_get_contents($configFile),
                 JsonEncoder::FORMAT,
                 [
                     JsonDecode::ASSOCIATIVE => true,
@@ -58,7 +58,7 @@ class RunCommand extends Command
             switch ($action) {
                 case 'testConnection':
                     $result = $extractor->actionTestConnection();
-                    $output->write(json_encode($result));
+                    $output->write((string) json_encode($result));
                     break;
                 case 'run':
                     $extractor->actionRun($outputPath);

@@ -45,7 +45,7 @@ JSON
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
-            'The child node "endpoint" at path "parameters.db" must be configured',
+            'The child config "endpoint" under "parameters.db" must be configured.',
             $commandTester->getDisplay()
         );
     }
@@ -53,7 +53,7 @@ JSON
     public function testMissingDbParameterTestMode(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The child node "endpoint" at path "parameters.db" must be configured');
+        $this->expectExceptionMessage('The child config "endpoint" under "parameters.db" must be configured');
 
         $application = new Application;
         $application->add(new RunCommand);

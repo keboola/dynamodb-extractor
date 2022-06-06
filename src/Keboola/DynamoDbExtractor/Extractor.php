@@ -13,14 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Extractor
 {
-    /** @var array<string, mixed> */
     private array $parameters;
 
     private DynamoDbClient $dynamoDbClient;
 
     private OutputInterface $consoleOutput;
 
-    /** @param array<string, mixed> $config */
     public function __construct(array $config, OutputInterface $output)
     {
         // validate configuration with ConfigDefinition
@@ -45,7 +43,6 @@ class Extractor
 
     /**
      * Tests connection to database by listing tables
-     * @return array<string, string>
      */
     public function actionTestConnection(): array
     {
@@ -70,7 +67,6 @@ class Extractor
                 if (file_exists($filename)) {
                     $webalizedExportName = Strings::webalize($exportOptions['name']);
                     $parser = new Parser(
-                        $webalizedExportName,
                         $filename,
                         $exportOptions['mapping'],
                         $this->consoleOutput
@@ -99,7 +95,6 @@ class Extractor
 
     /**
      * Validates exports
-     * @param array<string, mixed> $exports
      * @throws UserException
      */
     private function validateExports(array $exports): void
@@ -123,7 +118,6 @@ class Extractor
 
     /**
      * Validates export's "dateFilter"
-     * @param array<string, mixed> $dateFilter
      * @throws UserException
      */
     private function validateDateFilter(array $dateFilter, string $exportName): void

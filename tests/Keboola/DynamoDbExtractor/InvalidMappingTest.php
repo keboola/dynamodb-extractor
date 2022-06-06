@@ -58,7 +58,7 @@ JSON
         $this->assertSame(1, $exitCode);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString(
-            'Error writing \'info\' column: Cannot write object into a column',
+            'Error writing \'info\' column: Cannot write data into column:',
             $output
         );
     }

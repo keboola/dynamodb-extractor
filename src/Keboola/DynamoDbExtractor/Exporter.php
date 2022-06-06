@@ -15,7 +15,6 @@ class Exporter
 {
     private DynamoDbClient $dynamoDbClient;
 
-    /** @var mixed[]  */
     private array $exportOptions;
 
     private string $outputPath;
@@ -26,9 +25,6 @@ class Exporter
 
     private string $filename;
 
-    /**
-     * @param array<string, mixed> $exportOptions
-     */
     public function __construct(
         DynamoDbClient $dynamoDbClient,
         array $exportOptions,
@@ -62,7 +58,7 @@ class Exporter
 
         if (isset($this->exportOptions['dateFilter'])) {
             $paramsFromDateFilter = $this->createParamsFromDateFilter($this->exportOptions['dateFilter']);
-            $this->consoleOutput->writeln(json_encode($paramsFromDateFilter));
+            $this->consoleOutput->writeln((string) json_encode($paramsFromDateFilter));
             $params = array_merge($params, $paramsFromDateFilter);
         }
 
@@ -74,17 +70,18 @@ class Exporter
                     $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
                 }
                 $params['Limit'] = $scanLimit->getBatchSize();
-                $response = $this->dynamoDbClient->scan($params);
+                $response = $this->dynamoDbClient->scan($params)->toArray();
                 $scanLimit->decreaseLimit($response['Count']);
 
-                foreach ($response['Items'] as $item) {
+                /** @var array $item */
+                foreach ((array) $response['Items'] as $item) {
                     $json = json_encode($marshaler->unmarshalItem($item));
                     FileHelper::appendContentToFile($this->filename, $json . "\n");
                 }
             } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
         } catch (DynamoDbException $e) {
-            if ($e->getStatusCode() !== null && strpos($e->getStatusCode(), '4') === 0) {
-                throw new UserException($e->getAwsErrorCode());
+            if ($e->getStatusCode() !== null && substr((string) $e->getStatusCode(), 0, 1) === '4') {
+                throw new UserException((string) $e->getAwsErrorCode());
             } else {
                 throw $e;
             }
@@ -111,8 +108,6 @@ class Exporter
 
     /**
      * Creates filtering params from date filter
-     * @param array<string, mixed> $dateFilter
-     * @return array<string, mixed>
      */
     private function createParamsFromDateFilter(array $dateFilter): array
     {
