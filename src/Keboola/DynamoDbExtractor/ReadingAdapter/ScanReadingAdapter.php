@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\DynamoDbExtractor\ReadingAdapter;
 
-use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Keboola\DynamoDbExtractor\ScanLimit;
-use Keboola\DynamoDbExtractor\UserException;
 
 class ScanReadingAdapter extends AbstractReadingAdapter
 {
@@ -26,24 +24,16 @@ class ScanReadingAdapter extends AbstractReadingAdapter
 
         $marshaler = new Marshaler();
 
-        try {
-            do {
-                if (isset($response, $response['LastEvaluatedKey'])) {
-                    $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
-                }
-                $params['Limit'] = $scanLimit->getBatchSize();
-                $response = $this->dynamoDbClient->scan($params)->toArray();
-                $scanLimit->decreaseLimit($response['Count']);
-
-                $this->saveResponseItems($marshaler, (array) $response['Items']);
-            } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
-        } catch (DynamoDbException $e) {
-            if ($e->getStatusCode() !== null && substr((string) $e->getStatusCode(), 0, 1) === '4') {
-                throw new UserException((string) $e->getAwsErrorCode());
-            } else {
-                throw $e;
+        do {
+            if (isset($response, $response['LastEvaluatedKey'])) {
+                $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
             }
-        }
+            $params['Limit'] = $scanLimit->getBatchSize();
+            $response = $this->dynamoDbClient->scan($params)->toArray();
+            $scanLimit->decreaseLimit($response['Count']);
+
+            $this->saveResponseItems($marshaler, (array) $response['Items']);
+        } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
     }
 
     /**

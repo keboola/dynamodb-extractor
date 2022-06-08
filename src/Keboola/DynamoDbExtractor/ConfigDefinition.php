@@ -10,9 +10,13 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class ConfigDefinition implements ConfigurationInterface
 {
+    public const MODE_SCAN = 'scan';
+
+    public const MODE_QUERY = 'query';
+
     private const QUERY_INVALID_NODES = ['dateFilter'];
 
-    private const SCAN_INVALID_NODES = ['conditionExpressionKeys', 'conditionExpressionValues'];
+    private const SCAN_INVALID_NODES = ['KeyConditionExpression', 'ExpressionAttributeValues'];
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -44,7 +48,7 @@ class ConfigDefinition implements ConfigurationInterface
                 ->arrayNode('exports')
                     ->prototype('array')
                         ->validate()->always(function ($exportItem) {
-                            if ($exportItem['mode'] === 'query') {
+                            if ($exportItem['mode'] === self::MODE_QUERY) {
                                 foreach (self::QUERY_INVALID_NODES as $invalidNodes) {
                                     if (isset($exportItem[$invalidNodes])) {
                                         throw new InvalidConfigurationException(
@@ -64,34 +68,24 @@ class ConfigDefinition implements ConfigurationInterface
                             return $exportItem;
                         })->end()
                         ->children()
-                            ->integerNode('id')
-                                ->isRequired()
-                            ->end()
+                            ->integerNode('id')->isRequired()->end()
                             ->scalarNode('name')
                                 ->isRequired()
                                 ->cannotBeEmpty()
                             ->end()
                             ->enumNode('mode')
-                                ->values(['scan', 'query'])
-                                ->defaultValue('scan')
+                                ->values([self::MODE_SCAN, self::MODE_QUERY])
+                                ->defaultValue(self::MODE_SCAN)
                             ->end()
-                            ->scalarNode('table')
-                                ->isRequired()
-                                ->cannotBeEmpty()
-                            ->end()
-                            ->scalarNode('index')
-                                ->cannotBeEmpty()
-                            ->end()
-                            ->integerNode('limit')
-                            ->end()
-                            ->variableNode('dateFilter')
-                            ->end()
-                            ->booleanNode('enabled')
-                                ->defaultValue(true)
-                            ->end()
-                            ->booleanNode('incremental')
-                                ->isRequired()
-                            ->end()
+                            ->scalarNode('table')->isRequired()->cannotBeEmpty()->end()
+                            ->scalarNode('index')->cannotBeEmpty()->end()
+                            ->integerNode('limit')->end()
+                            ->variableNode('dateFilter')->end()
+                            ->scalarNode('keyConditionExpression')->end()
+                            ->variableNode('expressionAttributeValues')->end()
+                            ->variableNode('expressionAttributeNames')->end()
+                            ->booleanNode('enabled')->defaultValue(true)->end()
+                            ->booleanNode('incremental')->isRequired()->end()
                             ->arrayNode('primaryKey')
                                 ->scalarPrototype()
                                 ->end()
