@@ -11,6 +11,8 @@ class QueryReadingAdapter extends AbstractReadingAdapter
 {
     public function read(array $params): void
     {
+        $response = $this->dynamoDbClient->describeTable($params)->toArray();
+        $this->consoleOutput->writeln((string) json_encode($response));
         $marshaler = new Marshaler();
 
         if (!empty($this->exportOptions['keyConditionExpression'])) {
