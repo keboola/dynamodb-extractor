@@ -8,7 +8,6 @@ use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\CsvMap\Mapper;
 use Keboola\CsvTable\Table;
 use Nette\Utils\Strings;
-use SplFileInfo;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

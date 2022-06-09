@@ -26,25 +26,20 @@ Application is prepared for run in container, you can start development same way
 1. Clone this repository: `git clone git@github.com:keboola/dynamodb-extractor.git`
 2. Change directory: `cd dynamodb-extractor`
 3. Build services: `docker-compose build`
-4. Run tests `docker-compose run --rm app-tests` (runs `./tests.sh` script)
+4. Run tests `docker-compose run --rm app composer ci`
 
 After seeing all tests green, continue:
 
-1. Run service: `docker-compose run --rm app` (starts container with `bash`)
+1. Run service: `docker-compose run --rm app-tests` (starts container with `bash`)
 2. Create tables/indexes and load sample data: `php init.php`
 3. Write tests and code
-4. Run tests: `./tests.sh`
+4. Run tests: `composer tests`
 
 To simulate real run:
 
 1. Create data dir: `mkdir -p data`
 2. Follow configuration sample and create `config.json` file and place it to your data directory (`data/config.json`)
 3. Simulate real run (with entrypoint command): `php ./src/app.php run ./data`
-
-### Tests
-
-- all in one: `./tests.sh`
-- or separately, just check `tests.sh` file contents
 
 ## License
 

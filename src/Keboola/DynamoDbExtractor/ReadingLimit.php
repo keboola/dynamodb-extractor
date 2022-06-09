@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\DynamoDbExtractor;
 
-class ScanLimit
+class ReadingLimit
 {
     /** The maximum number of items to evaluate (DynamoDB's "Limit" parameter) */
     private int $batchSize;

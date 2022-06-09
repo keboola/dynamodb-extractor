@@ -7,9 +7,9 @@ namespace Keboola\DynamoDbExtractor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RunFullExportUnknownTableTest extends ExtractorTestCase
+class RunScanFullExportTest extends ExtractorTestCase
 {
-    protected string $dataDir = '/tmp/run-unknown-table';
+    protected string $dataDir = '/tmp/run';
 
     protected function setUp(): void
     {
@@ -28,9 +28,10 @@ class RunFullExportUnknownTableTest extends ExtractorTestCase
       {
         "id": 1,
         "name": "10-movies",
-        "table": "RandomTable",
+        "table": "Movies",
         "enabled": true,
         "incremental": true,
+        "primaryKey": ["title", "year"],
         "mapping": {
           "title": "title",
           "year": "year",
@@ -57,10 +58,31 @@ JSON
             'data directory' => $this->dataDir,
         ]);
 
-        $this->assertSame(1, $exitCode);
-        $this->assertStringContainsString(
-            'Cannot do operations on a non-existent table',
-            $commandTester->getDisplay()
-        );
+        $expectedFile = $this->dataDir . '/out/tables/10-movies.csv';
+        $expectedManifestFile = $expectedFile . '.manifest';
+
+        $this->assertSame(0, $exitCode);
+        $this->assertFileExists($expectedFile);
+        $this->assertFileExists($expectedManifestFile);
+
+        $expectedCsv = <<<CSV
+"title","year","rating"
+"Transformers: Age of Extinction","2014",""
+"X-Men: Days of Future Past","2014",""
+"Insidious: Chapter 2","2013","7.1"
+"Now You See Me","2013","7.3"
+"Prisoners","2013","8.2"
+"Rush","2013","8.3"
+"The Hunger Games: Catching Fire","2013",""
+"This Is the End","2013","7.2"
+"Thor: The Dark World","2013",""
+"World War Z","2013","7.1"\n
+CSV;
+        $this->assertEquals($expectedCsv, file_get_contents($expectedFile));
+
+        $expectedManifest = <<<JSON
+{"primary_key":["title","year"],"incremental":true}
+JSON;
+        $this->assertEquals($expectedManifest, file_get_contents($expectedManifestFile));
     }
 }

@@ -7,7 +7,7 @@ namespace Keboola\DynamoDbExtractor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RunFullExportTest extends ExtractorTestCase
+class RunQueryFullExportTest extends ExtractorTestCase
 {
     protected string $dataDir = '/tmp/run';
 
@@ -31,6 +31,14 @@ class RunFullExportTest extends ExtractorTestCase
         "table": "Movies",
         "enabled": true,
         "incremental": true,
+        "mode": "query",
+        "keyConditionExpression": "#yr = :a",
+        "expressionAttributeNames": {
+          "#yr": "year"
+        },
+        "expressionAttributeValues": {
+          ":a": "2013"
+        },
         "primaryKey": ["title", "year"],
         "mapping": {
           "title": "title",
@@ -56,19 +64,16 @@ JSON
         $exitCode = $commandTester->execute([
             'command' => $command->getName(),
             'data directory' => $this->dataDir,
-        ]);
+        ], ['capture_stderr_separately' => true]);
 
         $expectedFile = $this->dataDir . '/out/tables/10-movies.csv';
         $expectedManifestFile = $expectedFile . '.manifest';
-
         $this->assertSame(0, $exitCode);
         $this->assertFileExists($expectedFile);
         $this->assertFileExists($expectedManifestFile);
 
         $expectedCsv = <<<CSV
 "title","year","rating"
-"Transformers: Age of Extinction","2014",""
-"X-Men: Days of Future Past","2014",""
 "Insidious: Chapter 2","2013","7.1"
 "Now You See Me","2013","7.3"
 "Prisoners","2013","8.2"
