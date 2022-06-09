@@ -10,7 +10,7 @@ class ScanLimitTest extends TestCase
 {
     public function testLimitNull(): void
     {
-        $scanLimit = new ScanLimit(100);
+        $scanLimit = new ReadingLimit(100);
 
         $this->assertEquals(100, $scanLimit->getBatchSize());
         $this->assertTrue($scanLimit->shouldContinue());
@@ -23,7 +23,7 @@ class ScanLimitTest extends TestCase
 
     public function testLimitEqualsBatchSize(): void
     {
-        $scanLimit = new ScanLimit(100, 100);
+        $scanLimit = new ReadingLimit(100, 100);
         $scanLimit->decreaseLimit(100);
 
         $this->assertEquals(0, $scanLimit->getBatchSize());
@@ -32,7 +32,7 @@ class ScanLimitTest extends TestCase
 
     public function testLimitLessThanBatchSize(): void
     {
-        $scanLimit = new ScanLimit(100, 10);
+        $scanLimit = new ReadingLimit(100, 10);
 
         $this->assertEquals(10, $scanLimit->getBatchSize());
         $this->assertTrue($scanLimit->shouldContinue());
@@ -45,7 +45,7 @@ class ScanLimitTest extends TestCase
 
     public function testLimitGreaterThanBatchSize(): void
     {
-        $scanLimit = new ScanLimit(100, 223);
+        $scanLimit = new ReadingLimit(100, 223);
         $scanLimit->decreaseLimit(100);
 
         $this->assertEquals(100, $scanLimit->getBatchSize());

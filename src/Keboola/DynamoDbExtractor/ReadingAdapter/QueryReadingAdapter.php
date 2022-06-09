@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DynamoDbExtractor\ReadingAdapter;
 
 use Aws\DynamoDb\Marshaler;
+use Keboola\DynamoDbExtractor\ReadingLimit;
 
 class QueryReadingAdapter extends AbstractReadingAdapter
 {
@@ -19,8 +20,18 @@ class QueryReadingAdapter extends AbstractReadingAdapter
         if (!empty($this->exportOptions['expressionAttributeNames'])) {
             $params['ExpressionAttributeNames'] = $this->exportOptions['expressionAttributeNames'];
         }
-        $response = $this->dynamoDbClient->query($params);
 
-        $this->saveResponseItems($marshaler, (array) $response['Items']);
+        $scanLimit = new ReadingLimit(1000, $this->exportOptions['limit'] ?? null);
+
+        do {
+            if (isset($response, $response['LastEvaluatedKey'])) {
+                $params['ExclusiveStartKey'] = $response['LastEvaluatedKey'];
+            }
+            $params['Limit'] = $scanLimit->getBatchSize();
+            $response = $this->dynamoDbClient->query($params)->toArray();
+            $scanLimit->decreaseLimit($response['Count']);
+
+            $this->saveResponseItems($marshaler, (array) $response['Items']);
+        } while ($scanLimit->shouldContinue() && isset($response['LastEvaluatedKey']));
     }
 }

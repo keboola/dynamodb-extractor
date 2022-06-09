@@ -69,7 +69,7 @@ class Exporter
             $readingAdapter->read($params);
         } catch (DynamoDbException $e) {
             if ($e->getStatusCode() !== null && substr((string) $e->getStatusCode(), 0, 1) === '4') {
-                throw new UserException((string) $e->getAwsErrorCode());
+                throw new UserException((string) $e->getAwsErrorMessage());
             } else {
                 throw $e;
             }

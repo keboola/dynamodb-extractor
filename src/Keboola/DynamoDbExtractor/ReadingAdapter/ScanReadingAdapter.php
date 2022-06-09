@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Keboola\DynamoDbExtractor\ReadingAdapter;
 
 use Aws\DynamoDb\Marshaler;
-use Keboola\DynamoDbExtractor\ScanLimit;
+use Keboola\DynamoDbExtractor\ReadingLimit;
 
 class ScanReadingAdapter extends AbstractReadingAdapter
 {
@@ -20,7 +20,7 @@ class ScanReadingAdapter extends AbstractReadingAdapter
             $params = array_merge($params, $paramsFromDateFilter);
         }
 
-        $scanLimit = new ScanLimit(1000, $this->exportOptions['limit'] ?? null);
+        $scanLimit = new ReadingLimit(1000, $this->exportOptions['limit'] ?? null);
 
         $marshaler = new Marshaler();
 

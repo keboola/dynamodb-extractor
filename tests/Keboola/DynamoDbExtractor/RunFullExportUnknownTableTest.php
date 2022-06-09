@@ -59,7 +59,7 @@ JSON
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
-            'ResourceNotFoundException',
+            'Cannot do operations on a non-existent table',
             $commandTester->getDisplay()
         );
     }
