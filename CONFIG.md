@@ -99,7 +99,7 @@
     - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
     - `primaryKey`: primary key to set on imported table, defined as array
-    - `mode`: (optional): enum(scan|query) reading mode from dynamoDb - defailt is scan
+    - `mode`: (optional): enum(scan|query) reading mode from dynamoDb - default is scan
     - `keyConditionExpression`: (required): provide a specific value for the partition key
     - `expressionAttributeValues`: (required): values that can be substituted in an expression
     - `expressionAttributeNames`: (optional): substitution tokens for attribute names in an expression
