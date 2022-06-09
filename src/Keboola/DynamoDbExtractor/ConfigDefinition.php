@@ -17,6 +17,7 @@ class ConfigDefinition implements ConfigurationInterface
     private const QUERY_INVALID_NODES = ['dateFilter'];
 
     private const SCAN_INVALID_NODES = [
+        'indexName',
         'keyConditionExpression',
         'expressionAttributeNames',
         'expressionAttributeValues',
@@ -85,6 +86,7 @@ class ConfigDefinition implements ConfigurationInterface
                             ->scalarNode('index')->cannotBeEmpty()->end()
                             ->integerNode('limit')->end()
                             ->variableNode('dateFilter')->end()
+                            ->scalarNode('indexName')->end()
                             ->scalarNode('keyConditionExpression')->end()
                             ->variableNode('expressionAttributeValues')->end()
                             ->variableNode('expressionAttributeNames')->end()

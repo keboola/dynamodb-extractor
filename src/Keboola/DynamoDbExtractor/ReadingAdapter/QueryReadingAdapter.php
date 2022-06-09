@@ -15,6 +15,9 @@ class QueryReadingAdapter extends AbstractReadingAdapter
         $this->consoleOutput->writeln((string) json_encode($response));
         $marshaler = new Marshaler();
 
+        if (!empty($this->exportOptions['indexName'])) {
+            $params['IndexName'] = $this->exportOptions['indexName'];
+        }
         if (!empty($this->exportOptions['keyConditionExpression'])) {
             $params['KeyConditionExpression'] = $this->exportOptions['keyConditionExpression'];
         }
