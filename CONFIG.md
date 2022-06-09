@@ -1,6 +1,6 @@
 # Configuring in Keboola Connection UI
 
-## Sample
+## Sample scan mode
 
 
 ```json
@@ -23,10 +23,54 @@
         "title",
         "year"
       ],
+      "mode": "scan",
       "dateFilter": {
         "field": "year",
         "format": "Y",
         "value": "2014-01-01"
+      },
+      "limit": 100,
+      "mapping": {
+        "title": "title",
+        "year": "year",
+        "info.rating": "rating"
+      }
+    }
+  ]
+}
+```
+
+
+## Sample query mode
+
+
+```json
+{
+  "db": {
+    "endpoint": "endpoint",
+    "accessKeyId": "access key id",
+    "#secretAccessKey": "secret access key",
+    "regionName": "eu-central-1"
+  },
+  "exports": [
+    {
+      "id": 1,
+      "name": "my-movies",
+      "table": "Movies",
+      "index": "Movies_SomeIndex",
+      "enabled": true,
+      "incremental": true,
+      "primaryKey": [
+        "title",
+        "year"
+      ],
+      "mode": "query",
+      "keyConditionExpression": "#yr = :a",
+      "expressionAttributeNames": {
+        "#yr": "year"
+      },
+      "expressionAttributeValues": {
+        ":a": "2013"
       },
       "limit": 100,
       "mapping": {
@@ -55,7 +99,11 @@
     - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
     - `incremental`: if load of tables to storage will be incremental
     - `primaryKey`: primary key to set on imported table, defined as array
-    - `dateFilter` (optional): how to filter scanned documents
+    - `mode`: (optional): enum(scan|query) reading mode from dynamoDb - defailt is scan
+    - `keyConditionExpression`: (required): provide a specific value for the partition key
+    - `expressionAttributeValues`: (required): values that can be substituted in an expression
+    - `expressionAttributeNames`: (optional): substitution tokens for attribute names in an expression
+    - `dateFilter` (optional): how to filter scanned documents (only for scan mode)
         - `field`: field name in document by which you want to filter
         - `format`: date format (e.g. `Y-m-d` for date or `Y` for year)
         - `value`: date string from which date value will be created (e.g. `-2 days`)
