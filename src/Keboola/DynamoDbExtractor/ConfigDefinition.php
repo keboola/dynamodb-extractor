@@ -16,7 +16,11 @@ class ConfigDefinition implements ConfigurationInterface
 
     private const QUERY_INVALID_NODES = ['dateFilter'];
 
-    private const SCAN_INVALID_NODES = ['KeyConditionExpression', 'ExpressionAttributeValues'];
+    private const SCAN_INVALID_NODES = [
+        'keyConditionExpression',
+        'expressionAttributeNames',
+        'expressionAttributeValues',
+    ];
 
     public function getConfigTreeBuilder(): TreeBuilder
     {

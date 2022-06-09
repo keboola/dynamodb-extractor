@@ -13,10 +13,14 @@ class QueryReadingAdapter extends AbstractReadingAdapter
     {
         $marshaler = new Marshaler();
 
-        $params['KeyConditionExpression'] = $this->exportOptions['keyConditionExpression'];
-        $params['ExpressionAttributeValues'] = $marshaler->marshalJson(
-            (string) json_encode($this->exportOptions['expressionAttributeValues'])
-        );
+        if (!empty($this->exportOptions['keyConditionExpression'])) {
+            $params['KeyConditionExpression'] = $this->exportOptions['keyConditionExpression'];
+        }
+        if (!empty($this->exportOptions['expressionAttributeValues'])) {
+            $params['ExpressionAttributeValues'] = $marshaler->marshalJson(
+                (string) json_encode($this->exportOptions['expressionAttributeValues'])
+            );
+        }
         if (!empty($this->exportOptions['expressionAttributeNames'])) {
             $params['ExpressionAttributeNames'] = $this->exportOptions['expressionAttributeNames'];
         }
