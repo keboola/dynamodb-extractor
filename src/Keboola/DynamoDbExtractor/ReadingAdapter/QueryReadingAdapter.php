@@ -13,6 +13,9 @@ class QueryReadingAdapter extends AbstractReadingAdapter
     {
         $marshaler = new Marshaler();
 
+        if (!empty($this->exportOptions['indexName'])) {
+            $params['IndexName'] = $this->exportOptions['indexName'];
+        }
         if (!empty($this->exportOptions['keyConditionExpression'])) {
             $params['KeyConditionExpression'] = $this->exportOptions['keyConditionExpression'];
         }

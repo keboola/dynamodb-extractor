@@ -83,6 +83,46 @@
 }
 ```
 
+
+## Sample query mode (with secondary index)
+
+
+```json
+{
+  "db": {
+    "endpoint": "endpoint",
+    "accessKeyId": "access key id",
+    "#secretAccessKey": "secret access key",
+    "regionName": "eu-central-1"
+  },
+  "exports": [
+    {
+      "id": 1,
+      "name": "my-movies",
+      "table": "Movies",
+      "enabled": true,
+      "incremental": true,
+      "primaryKey": [
+        "title",
+        "year"
+      ],
+      "mode": "query",
+      "indexName": "Movies_title",
+      "keyConditionExpression": "title = :a",
+      "expressionAttributeValues": {
+        ":a": "Rush"
+      },
+      "limit": 100,
+      "mapping": {
+        "title": "title",
+        "year": "year",
+        "info.rating": "rating"
+      }
+    }
+  ]
+}
+```
+
 ## Description of `parameters`
 
 - `db`: DynamoDB instance connection options

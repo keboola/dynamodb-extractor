@@ -189,6 +189,35 @@ class ConfigurationTest extends TestCase
             'Node "expressionAttributeValues" is not allowed for scan export.',
         ];
 
+        yield 'bad-scan-params-4' => [
+            [
+                'parameters' => [
+                    'db' => [
+                        'endpoint' => 'dynamoUrl',
+                        'accessKeyId' => 'key',
+                        '#secretAccessKey' => 'secret',
+                        'regionName' => 'eu-central-1',
+                    ],
+                    'exports' => [
+                        [
+                            'id' => 1234,
+                            'name' => 'testName',
+                            'table' => 'testTable',
+                            'incremental' => false,
+                            'mode' => 'scan',
+                            'indexName' => 'index',
+                            'enabled' => true,
+                            'primaryKey' => [],
+                            'mapping' => [
+                                'id' => 'id',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'Node "indexName" is not allowed for scan export.',
+        ];
+
         yield 'bad-query-params' => [
             [
                 'parameters' => [
