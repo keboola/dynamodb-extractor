@@ -65,9 +65,9 @@
         "year"
       ],
       "mode": "query",
-      "keyConditionExpression": "#yr = :a",
+      "keyConditionExpression": "$yr = :a",
       "expressionAttributeNames": {
-        "#yr": "year"
+        "$yr": "year"
       },
       "expressionAttributeValues": {
         ":a": "2013"
@@ -142,7 +142,7 @@
     - `mode`: (optional): enum(scan|query) reading mode from dynamoDb - default is scan
     - `keyConditionExpression`: (required): provide a specific value for the partition key
     - `expressionAttributeValues`: (required): values that can be substituted in an expression
-    - `expressionAttributeNames`: (optional): substitution tokens for attribute names in an expression
+    - `expressionAttributeNames`: (optional): substitution tokens for attribute names in an expression. You can use placeholder `$` instead of `#` see sample
     - `dateFilter` (optional): how to filter scanned documents (only for scan mode)
         - `field`: field name in document by which you want to filter
         - `format`: date format (e.g. `Y-m-d` for date or `Y` for year)
