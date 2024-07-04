@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Keboola\BigQuery\Extractor\UnloadToCloudStorage\Csv;
+use Keboola\BigQuery\Extractor\Utils\IdGenerator;
 use Keboola\Component\Manifest\ManifestManager;
-use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
 use Nette\Utils\Strings;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -76,16 +77,22 @@ class Extractor
                     $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $manifestOptions = new OutTableManifestOptions();
-                    $manifestOptions->setIncremental($exportOptions['incremental']);
+                    $options = new ManifestManager\Options\OutTable\ManifestOptions();
+                    $options
+//                        ->setSchema($this->createSchema($this->tempTable))
+                        ->setIncremental($exportOptions['incremental'])
+//                        ->setDelimiter(Csv::UNLOAD_CSV_DELIMITER)
+//                        ->setEnclosure(Csv::UNLOAD_CSV_ENCLOSURE);
+
 
                     if (isset($exportOptions['primaryKey'])) {
-                        $manifestOptions->setPrimaryKeyColumns($exportOptions['primaryKey']);
+                        $options->setPrimaryKeyColumns($exportOptions['primaryKey']);
                     }
 
                     $manifestManager->writeTableManifest(
                         $webalizedExportName . '.csv',
-                        $manifestOptions,
+                        $options,
+//                        $this->config->getDataTypeSupport()->usingLegacyManifest(),
                     );
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);

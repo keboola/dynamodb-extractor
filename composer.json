@@ -12,7 +12,7 @@
         "nette/utils": "^3.2",
         "keboola/csvmap": "^2",
         "monolog/monolog": "^2.6",
-        "keboola/php-component": "^9.0"
+        "keboola/php-component": "^10"
     },
     "require-dev": {
         "keboola/coding-standard": "^15",
