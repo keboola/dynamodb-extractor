@@ -40,8 +40,7 @@ class RunFullExportUnknownTableTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testRun(): void
@@ -60,7 +59,7 @@ JSON
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
             'Cannot do operations on a non-existent table',
-            $commandTester->getDisplay()
+            $commandTester->getDisplay(),
         );
     }
 }

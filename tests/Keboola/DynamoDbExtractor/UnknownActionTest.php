@@ -27,8 +27,7 @@ class UnknownActionTest extends ExtractorTestCase
     }
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testUnknownAction(): void

@@ -57,7 +57,7 @@ class ConfigDefinition implements ConfigurationInterface
                                 foreach (self::QUERY_INVALID_NODES as $invalidNodes) {
                                     if (isset($exportItem[$invalidNodes])) {
                                         throw new InvalidConfigurationException(
-                                            sprintf('Node "%s" is not allowed for query export.', $invalidNodes)
+                                            sprintf('Node "%s" is not allowed for query export.', $invalidNodes),
                                         );
                                     }
                                 }
@@ -65,7 +65,7 @@ class ConfigDefinition implements ConfigurationInterface
                                 foreach (self::SCAN_INVALID_NODES as $invalidNodes) {
                                     if (isset($exportItem[$invalidNodes])) {
                                         throw new InvalidConfigurationException(
-                                            sprintf('Node "%s" is not allowed for scan export.', $invalidNodes)
+                                            sprintf('Node "%s" is not allowed for scan export.', $invalidNodes),
                                         );
                                     }
                                 }

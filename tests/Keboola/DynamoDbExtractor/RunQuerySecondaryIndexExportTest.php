@@ -47,8 +47,7 @@ class RunQuerySecondaryIndexExportTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testRun(): void

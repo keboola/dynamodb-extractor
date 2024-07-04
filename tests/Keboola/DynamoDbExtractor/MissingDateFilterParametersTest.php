@@ -45,8 +45,7 @@ class MissingDateFilterParametersTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testMissingDateFilterParameters(): void
@@ -66,7 +65,7 @@ JSON
         $this->assertStringContainsString(
             'Please check if "dateFilter" contains all required parameters (field, format and value)'
             . ' in "movies" export',
-            $commandTester->getDisplay()
+            $commandTester->getDisplay(),
         );
     }
 
@@ -75,7 +74,7 @@ JSON
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
             'Please check if "dateFilter" contains all required parameters (field, format and value)'
-            . ' in "movies" export'
+            . ' in "movies" export',
         );
 
         $application = new Application;

@@ -23,7 +23,7 @@ abstract class AbstractReadingAdapter
         array $exportOptions,
         DynamoDbClient $dynamoDbClient,
         OutputInterface $consoleOutput,
-        string $filename
+        string $filename,
     ) {
         $this->exportOptions = $exportOptions;
         $this->dynamoDbClient = $dynamoDbClient;

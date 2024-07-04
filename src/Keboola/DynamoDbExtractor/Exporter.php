@@ -28,7 +28,7 @@ class Exporter
         DynamoDbClient $dynamoDbClient,
         array $exportOptions,
         string $outputPath,
-        OutputInterface $output
+        OutputInterface $output,
     ) {
         $this->dynamoDbClient = $dynamoDbClient;
         $this->exportOptions = $exportOptions;
@@ -54,7 +54,7 @@ class Exporter
                     $this->exportOptions,
                     $this->dynamoDbClient,
                     $this->consoleOutput,
-                    $this->filename
+                    $this->filename,
                 );
                 break;
             default:
@@ -62,7 +62,7 @@ class Exporter
                     $this->exportOptions,
                     $this->dynamoDbClient,
                     $this->consoleOutput,
-                    $this->filename
+                    $this->filename,
                 );
         }
         try {

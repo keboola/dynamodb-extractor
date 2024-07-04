@@ -24,7 +24,7 @@ class Extractor
         // validate configuration with ConfigDefinition
         $this->parameters = (new Processor)->processConfiguration(
             new ConfigDefinition,
-            [$config['parameters']]
+            [$config['parameters']],
         );
 
         $this->consoleOutput = $output;
@@ -70,7 +70,7 @@ class Extractor
                         $webalizedExportName,
                         $filename,
                         $exportOptions['mapping'],
-                        $this->consoleOutput
+                        $this->consoleOutput,
                     );
 
                     $parser->parseAndWriteCsvFiles();
@@ -85,7 +85,7 @@ class Extractor
 
                     $manifestManager->writeTableManifest(
                         $webalizedExportName . '.csv',
-                        $manifestOptions
+                        $manifestOptions,
                     );
                 } else {
                     $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
@@ -126,13 +126,13 @@ class Extractor
         if (!isset($dateFilter['field'], $dateFilter['format'], $dateFilter['value'])) {
             throw new UserException(
                 'Please check if "dateFilter" contains all required parameters (field, format and value) '
-                . 'in "'. $exportName . '" export'
+                . 'in "'. $exportName . '" export',
             );
         }
 
         if (strtotime($dateFilter['value']) === false) {
             throw new UserException(
-                'Please check "value" field of "dateFiler" in "'. $exportName . '" export'
+                'Please check "value" field of "dateFiler" in "'. $exportName . '" export',
             );
         }
     }

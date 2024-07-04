@@ -27,8 +27,7 @@ class TestConnectionSuccessTest extends ExtractorTestCase
     }
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testConnection(): void

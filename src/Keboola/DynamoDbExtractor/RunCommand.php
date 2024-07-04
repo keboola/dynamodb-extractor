@@ -30,6 +30,7 @@ class RunCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dataDirectory = $input->getArgument('data directory');
+        assert(is_string($dataDirectory));
         $testMode = $input->getOption('test-mode');
         $logger = new Logger('app-errors', [new ErrorLogHandler]);
 
@@ -49,7 +50,7 @@ class RunCommand extends Command
                 JsonEncoder::FORMAT,
                 [
                     JsonDecode::ASSOCIATIVE => true,
-                ]
+                ],
             );
 
             $extractor = new Extractor($config, $output);
@@ -58,10 +59,10 @@ class RunCommand extends Command
             switch ($action) {
                 case 'testConnection':
                     $result = $extractor->actionTestConnection();
-                    $output->write((string) json_encode($result));
+                    $output->write((string) json_encode($result, JSON_THROW_ON_ERROR));
                     break;
                 case 'run':
-                    $extractor->actionRun(strval($dataDirectory));
+                    $extractor->actionRun($dataDirectory);
                     break;
                 default:
                     $output->writeln('Action "' . $action . '" not supported');

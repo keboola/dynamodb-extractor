@@ -45,8 +45,7 @@ class RunWithFilterExpressionTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testRun(): void

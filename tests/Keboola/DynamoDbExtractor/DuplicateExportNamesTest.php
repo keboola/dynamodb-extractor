@@ -46,8 +46,7 @@ class DuplicateExportNamesTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testDuplicateExportNames(): void

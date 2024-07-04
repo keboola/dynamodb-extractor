@@ -38,8 +38,7 @@ class InvalidMappingTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testExportInvalidMappingBadData(): void
@@ -59,7 +58,7 @@ JSON
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString(
             'Error writing \'info\' column: Cannot write data into column:',
-            $output
+            $output,
         );
     }
 }

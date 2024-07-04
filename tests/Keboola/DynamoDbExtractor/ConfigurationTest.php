@@ -18,7 +18,7 @@ class ConfigurationTest extends TestCase
     {
         $parameters = (new Processor)->processConfiguration(
             new ConfigDefinition,
-            [$config['parameters']]
+            [$config['parameters']],
         );
 
         self::assertEquals($config['parameters'], $parameters);
@@ -33,7 +33,7 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage($exceptionMessage);
         (new Processor)->processConfiguration(
             new ConfigDefinition,
-            [$config['parameters']]
+            [$config['parameters']],
         );
     }
 

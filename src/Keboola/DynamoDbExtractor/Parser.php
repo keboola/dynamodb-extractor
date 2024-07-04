@@ -41,7 +41,7 @@ class Parser
     {
         $this->consoleOutput->writeln('Parsing "' . $this->filename . '"');
 
-        $handle = fopen($this->filename, 'r');
+        $handle = fopen($this->filename, 'rb');
         if (!$handle) {
             return;
         }
@@ -50,11 +50,12 @@ class Parser
             $line = (string) fgets($handle);
             $data = [];
             if (trim($line) !== '') {
-                $data = [json_decode($line)];
+                $data = [json_decode($line, false, 512, JSON_THROW_ON_ERROR)];
             }
 
             $parser = new Mapper($this->mapping, true, $this->name);
             try {
+                //@phpstan-ignore-next-line
                 $parser->parse($data);
             } catch (BadDataException $e) {
                 throw new UserException($e->getMessage());

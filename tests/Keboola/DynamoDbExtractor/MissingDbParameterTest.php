@@ -26,8 +26,7 @@ class MissingDbParameterTest extends ExtractorTestCase
     }
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testMissingDbParameter(): void
@@ -46,7 +45,7 @@ JSON
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
             'The child config "endpoint" under "parameters.db" must be configured.',
-            $commandTester->getDisplay()
+            $commandTester->getDisplay(),
         );
     }
 

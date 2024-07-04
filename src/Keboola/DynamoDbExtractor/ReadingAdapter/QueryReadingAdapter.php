@@ -25,7 +25,7 @@ class QueryReadingAdapter extends AbstractReadingAdapter
 
         if (!empty($options['expressionAttributeValues'])) {
             $params['ExpressionAttributeValues'] = $marshaler->marshalJson(
-                (string) json_encode($options['expressionAttributeValues'])
+                (string) json_encode($options['expressionAttributeValues']),
             );
         }
 
@@ -67,7 +67,7 @@ class QueryReadingAdapter extends AbstractReadingAdapter
         $exportOptions['keyConditionExpression'] = str_ireplace(
             array_keys($placeholdes),
             array_values($placeholdes),
-            $exportOptions['keyConditionExpression']
+            $exportOptions['keyConditionExpression'],
         );
 
         return $exportOptions;

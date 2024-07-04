@@ -20,7 +20,7 @@ class DiskFullTest extends ExtractorTestCase
         // simulate full disk
         $this->fs->mkdir($this->dataDir . '/out/tables');
         $process = Process::fromShellCommandline(
-            'ln -s /dev/full ' . $this->dataDir . '/out/tables/10-movies.json'
+            'ln -s /dev/full ' . $this->dataDir . '/out/tables/10-movies.json',
         );
         $process->mustRun();
 
@@ -49,8 +49,7 @@ class DiskFullTest extends ExtractorTestCase
     ]
   }
 }
-JSON
-        );
+JSON,);
     }
 
     public function testDiskFull(): void
@@ -70,7 +69,7 @@ JSON
 
         $this->assertStringContainsString(
             'No space left on device',
-            (string) file_get_contents('/code/error.log')
+            (string) file_get_contents('/code/error.log'),
         );
     }
 

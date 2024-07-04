@@ -4,18 +4,18 @@
     "type": "project",
     "description": "Keboola DynamoDB Extractor",
     "require": {
-        "php": "^7.4",
+        "php": "^8.3",
         "aws/aws-sdk-php": "^3.224",
         "symfony/console": "^5.4",
         "symfony/serializer": "^5.4",
         "symfony/filesystem": "^5.4",
         "nette/utils": "^3.2",
-        "keboola/csvmap": "^1.1",
+        "keboola/csvmap": "^2",
         "monolog/monolog": "^2.6",
         "keboola/php-component": "^9.0"
     },
     "require-dev": {
-        "keboola/coding-standard": "^13.0",
+        "keboola/coding-standard": "^15",
         "phpunit/phpunit": "^9.5",
         "phpstan/phpstan": "^1.7",
         "symfony/process": "^5.4",
