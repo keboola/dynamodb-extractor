@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Keboola\DynamoDbExtractor;
+namespace Keboola\DynamoDbExtractor\Tests;
 
 use Generator;
+use Keboola\DynamoDbExtractor\Config\ConfigDefinition;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -18,10 +19,10 @@ class ConfigurationTest extends TestCase
     {
         $parameters = (new Processor)->processConfiguration(
             new ConfigDefinition,
-            [$config['parameters']],
+            [$config],
         );
 
-        self::assertEquals($config['parameters'], $parameters);
+        self::assertEquals($config, $parameters);
     }
 
     /**
@@ -33,7 +34,7 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage($exceptionMessage);
         (new Processor)->processConfiguration(
             new ConfigDefinition,
-            [$config['parameters']],
+            [$config],
         );
     }
 

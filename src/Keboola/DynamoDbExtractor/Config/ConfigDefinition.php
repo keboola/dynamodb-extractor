@@ -2,33 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Keboola\DynamoDbExtractor;
+namespace Keboola\DynamoDbExtractor\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Keboola\Component\Config\BaseConfigDefinition;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class ConfigDefinition implements ConfigurationInterface
+class ConfigDefinition extends BaseConfigDefinition
 {
-    public const MODE_SCAN = 'scan';
+    public const string MODE_SCAN = 'scan';
 
-    public const MODE_QUERY = 'query';
+    public const string MODE_QUERY = 'query';
 
-    private const QUERY_INVALID_NODES = ['dateFilter'];
+    private const array QUERY_INVALID_NODES = ['dateFilter'];
 
-    private const SCAN_INVALID_NODES = [
+    private const array SCAN_INVALID_NODES = [
         'indexName',
         'keyConditionExpression',
         'expressionAttributeNames',
         'expressionAttributeValues',
     ];
 
-    public function getConfigTreeBuilder(): TreeBuilder
+    public function getParametersDefinition(): ArrayNodeDefinition
     {
-        $treeBuilder = new TreeBuilder('parameters');
-        $rootNode = $treeBuilder->getRootNode();
+        $parametersNode = parent::getParametersDefinition();
 
-        $rootNode
+        $parametersNode
             ->children()
                 ->arrayNode('db')
                     ->children()
@@ -106,6 +105,6 @@ class ConfigDefinition implements ConfigurationInterface
             ->end()
         ;
 
-        return $treeBuilder;
+        return $parametersNode;
     }
 }

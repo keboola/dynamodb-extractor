@@ -1,40 +1,30 @@
-version: "3.8"
-
 services:
-
-  app:
+  app: &app
     build: .
     image: keboola/dynamodb-extractor
-    tty: true
-    stdin_open: true
     links:
       - dynamodb
-    command: bash
+    environment:
+      - KBC_DATA_TYPE_SUPPORT=none
     volumes:
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
-
-  app-tests:
-    build:
-      context: .
-      dockerfile: Dockerfile-tests
     depends_on:
-      - app
-    links:
-      - dynamodb
+      dynamodb:
+        condition: service_healthy
+
+
+  dev:
+    <<: *app
     volumes:
       - ./:/code
       - ./data:/data
-
-  wait:
-    image: waisbrot/wait
-    depends_on:
-      - dynamodb
-    environment:
-      - TARGETS=dynamodb:8000
-      - TIMEOUT=200
 
   dynamodb:
     image: amazon/dynamodb-local:1.18.0
     ports:
       - '8000:8000'
-
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:8000/shell"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
