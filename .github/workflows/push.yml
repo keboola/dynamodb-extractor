@@ -81,7 +81,7 @@ jobs:
       -
         name: Run tests
         run: |
-          docker-compose run --rm app composer ci
+          docker compose run --rm app composer ci
 
   tests-in-kbc:
     needs: build
