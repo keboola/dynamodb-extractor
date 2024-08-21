@@ -1,0 +1,11 @@
+{
+  "action": "testConnection",
+  "parameters": {
+    "db": {
+      "endpoint": "http://dynamodb:8000",
+      "accessKeyId": "access key",
+      "#secretAccessKey": "access secret",
+      "regionName": "eu-central-1"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "parameters": {
+    "db": {
+      "endpoint": "http://dynamodb:8000",
+      "accessKeyId": "key",
+      "#secretAccessKey": "secret",
+      "regionName": "eu-central-1"
+    },
+    "exports": [
+      {
+        "id": 1,
+        "name": "movies",
+        "table": "Movies",
+        "enabled": true,
+        "incremental": true,
+        "mapping": {
+          "title": "title",
+          "year": "year",
+          "info.rating": "rating"
+        },
+        "dateFilter": {
+          "field": "year",
+          "format": "Y"
+        }
+      }
+    ]
+  }
+}

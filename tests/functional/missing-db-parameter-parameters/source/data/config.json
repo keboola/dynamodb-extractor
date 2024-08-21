@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "db": {
+      "accessKeyId": "access key",
+      "#secretAccessKey": "access secret",
+      "regionName": "eu-central-1"
+    }
+  }
+}

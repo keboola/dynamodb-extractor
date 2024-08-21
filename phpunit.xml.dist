@@ -7,10 +7,13 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         bootstrap="tests/bootstrap.php">
+         bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="unit">
-            <directory>tests/Keboola/DynamoDbExtractor</directory>
+            <directory>tests/phpunit</directory>
+        </testsuite>
+        <testsuite name="functional">
+            <directory>tests/functional</directory>
         </testsuite>
     </testsuites>
 </phpunit>
