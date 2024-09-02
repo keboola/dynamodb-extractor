@@ -1,4 +1,4 @@
-FROM php:7.4-cli
+FROM php:8.3-cli
 
 ARG COMPOSER_FLAGS="--prefer-dist --no-interaction"
 ARG DEBIAN_FRONTEND=noninteractive
@@ -42,4 +42,4 @@ COPY . /code/
 # Run normal composer - all deps are cached already
 RUN composer install $COMPOSER_FLAGS
 
-CMD php ./src/app.php run /data
+CMD ["php", "/code/src/run.php"]

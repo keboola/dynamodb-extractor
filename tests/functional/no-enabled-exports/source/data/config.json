@@ -1,0 +1,22 @@
+{
+  "parameters": {
+    "db": {
+      "endpoint": "http://dynamodb:8000",
+      "accessKeyId": "key",
+      "#secretAccessKey": "secret",
+      "regionName": "eu-central-1"
+    },
+    "exports": [
+      {
+        "id": 1,
+        "name": "not-enabled",
+        "table": "Movies",
+        "incremental": true,
+        "enabled": false,
+        "mapping": {
+          "title": "title"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+ {
+   "incremental": true,
+   "schema": [
+     {
+       "nullable": true,
+       "primary_key": true,
+       "name": "title",
+       "data_type": {
+         "base": {
+           "type": "string"
+         }
+       }
+     },
+     {
+       "nullable": true,
+       "primary_key": true,
+       "name": "year",
+       "data_type": {
+         "base": {
+           "type": "string"
+         }
+       }
+     },
+     {
+       "nullable": true,
+       "primary_key": false,
+       "name": "rating",
+       "data_type": {
+         "base": {
+           "type": "string"
+         }
+       }
+     }
+   ]
+ }

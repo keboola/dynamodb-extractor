@@ -6,33 +6,31 @@ namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
+use Keboola\Component\UserException;
+use Keboola\DynamoDbExtractor\Config\ConfigDefinition;
 use Keboola\DynamoDbExtractor\ReadingAdapter\QueryReadingAdapter;
 use Keboola\DynamoDbExtractor\ReadingAdapter\ScanReadingAdapter;
 use Nette\Utils\Strings;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Exporter
 {
     private DynamoDbClient $dynamoDbClient;
-
     private array $exportOptions;
-
-    private OutputInterface $consoleOutput;
-
     private Filesystem $filesystem;
-
     private string $filename;
+    private LoggerInterface $logger;
 
     public function __construct(
         DynamoDbClient $dynamoDbClient,
         array $exportOptions,
         string $outputPath,
-        OutputInterface $output
+        LoggerInterface $logger,
     ) {
         $this->dynamoDbClient = $dynamoDbClient;
         $this->exportOptions = $exportOptions;
-        $this->consoleOutput = $output;
+        $this->logger = $logger;
 
         $this->filesystem = new Filesystem;
         $this->filename = $outputPath . '/out/tables/' . Strings::webalize($this->exportOptions['name']) . '.json';
@@ -53,16 +51,16 @@ class Exporter
                 $readingAdapter = new QueryReadingAdapter(
                     $this->exportOptions,
                     $this->dynamoDbClient,
-                    $this->consoleOutput,
-                    $this->filename
+                    $this->logger,
+                    $this->filename,
                 );
                 break;
             default:
                 $readingAdapter = new ScanReadingAdapter(
                     $this->exportOptions,
                     $this->dynamoDbClient,
-                    $this->consoleOutput,
-                    $this->filename
+                    $this->logger,
+                    $this->filename,
                 );
         }
         try {

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Keboola\DynamoDbExtractor;
 
+use Keboola\Component\UserException;
 use Keboola\CsvMap\Exception\BadDataException;
 use Keboola\CsvMap\Mapper;
 use Keboola\CsvTable\Table;
 use Nette\Utils\Strings;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Parser
@@ -19,76 +20,78 @@ class Parser
 
     private array $mapping;
 
-    private OutputInterface $consoleOutput;
+    private LoggerInterface $logger;
 
     private Filesystem $filesystem;
 
-    public function __construct(string $name, string $filename, array $mapping, OutputInterface $output)
+    public function __construct(string $name, string $filename, array $mapping, LoggerInterface $logger)
     {
         $this->name = $name;
         $this->filename = $filename;
         $this->mapping = $mapping;
-        $this->consoleOutput = $output;
+        $this->logger = $logger;
 
         $this->filesystem = new Filesystem;
     }
 
     /**
      * Parses json using Mapper and writes output to CSV files
-     * @throws \Keboola\DynamoDbExtractor\UserException|\Keboola\Csv\Exception
+     * @throws \Keboola\Component\UserException|\Keboola\Csv\Exception
      */
-    public function parseAndWriteCsvFiles(): void
+    public function parseAndWriteCsvFiles(): array
     {
-        $this->consoleOutput->writeln('Parsing "' . $this->filename . '"');
+        $this->logger->info('Parsing "' . $this->filename . '"');
 
-        $handle = fopen($this->filename, 'r');
+        $handle = fopen($this->filename, 'rb');
         if (!$handle) {
-            return;
+            return [];
         }
 
+        $headers = [];
         while (!feof($handle)) {
             $line = (string) fgets($handle);
             $data = [];
             if (trim($line) !== '') {
-                $data = [json_decode($line)];
+                $data = [json_decode($line, false, 512, JSON_THROW_ON_ERROR)];
             }
 
             $parser = new Mapper($this->mapping, true, $this->name);
             try {
+                //@phpstan-ignore-next-line
                 $parser->parse($data);
             } catch (BadDataException $e) {
                 throw new UserException($e->getMessage());
             }
 
-            $this->write($parser->getCsvFiles());
+            $headers = array_merge($headers, $this->write($parser->getCsvFiles()));
         }
 
-        $this->consoleOutput->writeln('Done');
+        $this->logger->info('Done');
+        return $headers;
     }
 
     /**
      * Writes CSV files to filesystem
      */
-    private function write(array $csvFiles): void
+    private function write(array $csvFiles): array
     {
+        $headers = [];
         foreach ($csvFiles as $file) {
             /** @var Table $file */
             $name = Strings::webalize($file->getName());
             $outputCsv = dirname($this->filename). '/' . $name . '.csv';
 
             $content = (string) file_get_contents($file->getPathname());
-
-            // csv-map doesn't have option to skip header yet,
-            // so we skip header if file exists
-            if ($this->filesystem->exists($outputCsv)) {
-                $contentArr = explode("\n", $content);
-                array_shift($contentArr);
-                $content = implode("\n", $contentArr);
-            }
+            $contentArr = explode("\n", $content);
+            $header = array_shift($contentArr);
+            $content = implode("\n", $contentArr);
 
             FileHelper::appendContentToFile($outputCsv, $content);
 
             $this->filesystem->remove($file->getPathname());
+            $headers[$name] = explode(',', $header);
         }
+
+        return $headers;
     }
 }

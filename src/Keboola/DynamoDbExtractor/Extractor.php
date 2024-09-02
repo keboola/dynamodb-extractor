@@ -5,40 +5,36 @@ declare(strict_types=1);
 namespace Keboola\DynamoDbExtractor;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Keboola\Component\Config\DatatypeSupport;
 use Keboola\Component\Manifest\ManifestManager;
-use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
+use Keboola\Component\UserException;
+use Keboola\DynamoDbExtractor\Config\Config;
 use Nette\Utils\Strings;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerInterface;
 
 class Extractor
 {
-    private array $parameters;
-
     private DynamoDbClient $dynamoDbClient;
+    private array $exports;
+    private DatatypeSupport $dataTypeSupport;
+    private LoggerInterface $logger;
 
-    private OutputInterface $consoleOutput;
-
-    public function __construct(array $config, OutputInterface $output)
+    public function __construct(LoggerInterface $logger, Config $config)
     {
-        // validate configuration with ConfigDefinition
-        $this->parameters = (new Processor)->processConfiguration(
-            new ConfigDefinition,
-            [$config['parameters']]
-        );
-
-        $this->consoleOutput = $output;
-
+        $dbConfig = $config->getDb();
         // create DynamoDbClient instance
         $this->dynamoDbClient = new DynamoDbClient([
-            'endpoint' => $this->parameters['db']['endpoint'],
+            'endpoint' => $dbConfig['endpoint'],
             'credentials' => [
-                'key' => $this->parameters['db']['accessKeyId'],
-                'secret' => $this->parameters['db']['#secretAccessKey'],
+                'key' => $dbConfig['accessKeyId'],
+                'secret' => $dbConfig['#secretAccessKey'],
             ],
-            'region' => $this->parameters['db']['regionName'],
+            'region' => $dbConfig['regionName'],
             'version' => '2012-08-10',
         ]);
+        $this->exports = $config->getExports();
+        $this->dataTypeSupport = $config->getDataTypeSupport();
+        $this->logger = $logger;
     }
 
     /**
@@ -55,12 +51,13 @@ class Extractor
 
     public function actionRun(string $outputPath): void
     {
-        $this->validateExports($this->parameters['exports']);
+        $this->validateExports($this->exports);
 
         $manifestManager = new ManifestManager($outputPath);
 
-        foreach ($this->parameters['exports'] as $exportOptions) {
-            $export = new Exporter($this->dynamoDbClient, $exportOptions, $outputPath, $this->consoleOutput);
+        foreach ($this->exports as $exportOptions) {
+            $export = new Exporter($this->dynamoDbClient, $exportOptions, $outputPath, $this->logger);
+            $primaryKeysSet = [];
 
             if ($export->hasEnabledExport()) {
                 $filename = $export->export();
@@ -70,26 +67,46 @@ class Extractor
                         $webalizedExportName,
                         $filename,
                         $exportOptions['mapping'],
-                        $this->consoleOutput
+                        $this->logger,
                     );
 
-                    $parser->parseAndWriteCsvFiles();
+                    $headers = $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $manifestOptions = new OutTableManifestOptions();
-                    $manifestOptions->setIncremental($exportOptions['incremental']);
+                    $options = new ManifestManager\Options\OutTable\ManifestOptions();
+                    $options->setIncremental($exportOptions['incremental']);
 
-                    if (isset($exportOptions['primaryKey'])) {
-                        $manifestOptions->setPrimaryKeyColumns($exportOptions['primaryKey']);
+                    if (isset($headers[$webalizedExportName])) {
+                        foreach ($headers[$webalizedExportName] as $column) {
+                            $column = trim($column, '"');
+                            $isPrimaryKey = in_array($column, $exportOptions['primaryKey'] ?? [], true);
+                            if ($isPrimaryKey) {
+                                $primaryKeysSet[] = $column;
+                            }
+                            $options->addSchema(new ManifestManager\Options\OutTable\ManifestOptionsSchema(
+                                $column,
+                                ['base' => ['type' => 'string']],
+                                true,
+                                $isPrimaryKey,
+                            ));
+                        }
                     }
 
                     $manifestManager->writeTableManifest(
                         $webalizedExportName . '.csv',
-                        $manifestOptions
+                        $options,
+                        $this->dataTypeSupport->usingLegacyManifest(),
                     );
                 } else {
-                    $this->consoleOutput->writeln('No documents found for export ' . $exportOptions['name']);
+                    $this->logger->info('No documents found for export ' . $exportOptions['name']);
                 }
+            }
+
+            if (isset($exportOptions['primaryKey']) && count($primaryKeysSet) !== count($exportOptions['primaryKey'])) {
+                throw new UserException(sprintf(
+                    'Primary keys do not match columns. Missing columns: %s',
+                    implode(', ', array_diff($exportOptions['primaryKey'], $primaryKeysSet)),
+                ));
             }
         }
     }
@@ -126,13 +143,13 @@ class Extractor
         if (!isset($dateFilter['field'], $dateFilter['format'], $dateFilter['value'])) {
             throw new UserException(
                 'Please check if "dateFilter" contains all required parameters (field, format and value) '
-                . 'in "'. $exportName . '" export'
+                . 'in "'. $exportName . '" export',
             );
         }
 
         if (strtotime($dateFilter['value']) === false) {
             throw new UserException(
-                'Please check "value" field of "dateFiler" in "'. $exportName . '" export'
+                'Please check "value" field of "dateFiler" in "'. $exportName . '" export',
             );
         }
     }

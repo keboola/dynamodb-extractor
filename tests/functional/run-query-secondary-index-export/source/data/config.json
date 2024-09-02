@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "db": {
+      "endpoint": "http://dynamodb:8000",
+      "accessKeyId": "key",
+      "#secretAccessKey": "secret",
+      "regionName": "eu-central-1"
+    },
+    "exports": [
+      {
+        "id": 1,
+        "name": "10-movies",
+        "table": "Movies",
+        "enabled": true,
+        "incremental": true,
+        "mode": "query",
+        "indexName": "Movies_title",
+        "keyConditionExpression": "title = :a",
+        "expressionAttributeValues": {
+          ":a": "Rush"
+        },
+        "primaryKey": ["title", "year"],
+        "mapping": {
+          "title": "title",
+          "year": "year",
+          "info.rating": "rating"
+        }
+      }
+    ]
+  }
+}
