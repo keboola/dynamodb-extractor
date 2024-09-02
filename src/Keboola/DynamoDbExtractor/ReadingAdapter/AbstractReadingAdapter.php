@@ -7,6 +7,7 @@ namespace Keboola\DynamoDbExtractor\ReadingAdapter;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Keboola\DynamoDbExtractor\FileHelper;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractReadingAdapter
@@ -15,19 +16,19 @@ abstract class AbstractReadingAdapter
 
     protected DynamoDbClient $dynamoDbClient;
 
-    protected OutputInterface $consoleOutput;
+    protected LoggerInterface $logger;
 
     protected string $filename;
 
     public function __construct(
         array $exportOptions,
         DynamoDbClient $dynamoDbClient,
-        OutputInterface $consoleOutput,
+        LoggerInterface $logger,
         string $filename,
     ) {
         $this->exportOptions = $exportOptions;
         $this->dynamoDbClient = $dynamoDbClient;
-        $this->consoleOutput = $consoleOutput;
+        $this->logger = $logger;
         $this->filename = $filename;
     }
 

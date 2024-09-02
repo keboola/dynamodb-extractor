@@ -1,0 +1,44 @@
+{
+  "incremental": true,
+  "columns": [
+    "title",
+    "year",
+    "rating"
+  ],
+  "primary_key": [
+    "title",
+    "year"
+  ],
+  "column_metadata": {
+    "title": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ],
+    "year": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ],
+    "rating": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ]
+  }
+}

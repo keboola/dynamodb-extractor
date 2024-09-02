@@ -16,7 +16,7 @@ class ScanReadingAdapter extends AbstractReadingAdapter
         }
         if (isset($this->exportOptions['dateFilter'])) {
             $paramsFromDateFilter = $this->createParamsFromDateFilter($this->exportOptions['dateFilter']);
-            $this->consoleOutput->writeln((string) json_encode($paramsFromDateFilter));
+            $this->logger->info((string) json_encode($paramsFromDateFilter, JSON_THROW_ON_ERROR));
             $params = array_merge($params, $paramsFromDateFilter);
         }
 

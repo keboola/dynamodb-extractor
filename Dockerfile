@@ -42,4 +42,4 @@ COPY . /code/
 # Run normal composer - all deps are cached already
 RUN composer install $COMPOSER_FLAGS
 
-CMD php ./src/app.php run /data
+CMD ["php", "/code/src/run.php"]

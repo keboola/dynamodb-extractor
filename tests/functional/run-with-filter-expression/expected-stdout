@@ -1,0 +1,3 @@
+{"FilterExpression":"#field >= :value","ExpressionAttributeNames":{"#field":"year"},"ExpressionAttributeValues":{":value":{"S":"2014"}}}
+Parsing "/tmp/run-%s/out/tables/10-movies.json"
+Done
