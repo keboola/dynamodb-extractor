@@ -1,0 +1,29 @@
+{
+  "incremental": true,
+  "columns": [
+    "rating",
+    "10-movies_pk"
+  ],
+  "column_metadata": {
+    "rating": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ],
+    "10-movies_pk": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ]
+  }
+}
