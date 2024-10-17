@@ -1,0 +1,29 @@
+{
+  "incremental": true,
+  "columns": [
+    "title",
+    "info"
+  ],
+  "column_metadata": {
+    "title": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ],
+    "info": [
+      {
+        "key": "KBC.datatype.nullable",
+        "value": true
+      },
+      {
+        "key": "KBC.datatype.basetype",
+        "value": "string"
+      }
+    ]
+  }
+}

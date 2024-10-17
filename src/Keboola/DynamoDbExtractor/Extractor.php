@@ -73,11 +73,11 @@ class Extractor
                     $headers = $parser->parseAndWriteCsvFiles();
                     $export->cleanup();
 
-                    $options = new ManifestManager\Options\OutTable\ManifestOptions();
-                    $options->setIncremental($exportOptions['incremental']);
+                    foreach ($headers as $tableName => $tableHeaders) {
+                        $options = new ManifestManager\Options\OutTable\ManifestOptions();
+                        $options->setIncremental($exportOptions['incremental']);
 
-                    if (isset($headers[$webalizedExportName])) {
-                        foreach ($headers[$webalizedExportName] as $column) {
+                        foreach ($tableHeaders as $column) {
                             $column = trim($column, '"');
                             $isPrimaryKey = in_array($column, $exportOptions['primaryKey'] ?? [], true);
                             if ($isPrimaryKey) {
@@ -90,13 +90,13 @@ class Extractor
                                 $isPrimaryKey,
                             ));
                         }
-                    }
 
-                    $manifestManager->writeTableManifest(
-                        $webalizedExportName . '.csv',
-                        $options,
-                        $this->dataTypeSupport->usingLegacyManifest(),
-                    );
+                        $manifestManager->writeTableManifest(
+                            $tableName . '.csv',
+                            $options,
+                            $this->dataTypeSupport->usingLegacyManifest(),
+                        );
+                    }
                 } else {
                     $this->logger->info('No documents found for export ' . $exportOptions['name']);
                 }
