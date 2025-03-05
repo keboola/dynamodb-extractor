@@ -1,18 +1,18 @@
 # DynamoDB Extractor
 
-Docker application for exporting data from Amazon DynamoDB.
+This Docker application exports data from Amazon DynamoDB to Keboola.
 
 ## Configuration
 
-Sample configuration and its description can be found [here](/CONFIG.md).
+A sample configuration and its description can be found [here](/CONFIG.md).
 
 ## Output
 
-After successful extraction there are several CSV files which contains exported data. First output
-file is named after `name` parameter in export configuration. Other files are named after destination
-parameter in mapping section.
+After a successful extraction, several CSV files containing exported data will be generated. 
+- The first output file is named after the `name` parameter in the export configuration.
+- Additional files are named according to the destination parameter in the mapping section.
 
-Also, there is manifest file for each of the export.
+A manifest file is also created for each export.
 
 ## Development
 
@@ -21,26 +21,26 @@ Requirements:
 - Docker Engine: `~1.12`
 - Docker Compose: `~1.8`
 
-Application is prepared for run in container, you can start development same way:
+This application is designed to run in a Docker container. To start development, follow these steps:
 
 1. Clone this repository: `git clone git@github.com:keboola/dynamodb-extractor.git`
-2. Change directory: `cd dynamodb-extractor`
+2. Navigate to the project directory: `cd dynamodb-extractor`
 3. Build services: `docker compose build`
-4. Run tests `docker compose run --rm app composer ci`
+4. Run tests: `docker compose run --rm app composer ci`
 
-After seeing all tests green, continue:
+Once all tests pass successfully, continue with:
 
-1. Run service: `docker compose run --rm app bash`
+1. Run the service: `docker compose run --rm app bash`
 2. Create tables/indexes and load sample data: `php tests/fixtures/init.php`
-3. Write tests and code
+3. Write tests and develop the required code.
 4. Run tests: `composer tests`
 
-To simulate real run:
+To simulate a real run:
 
-1. Create data dir: `mkdir -p data`
-2. Follow configuration sample and create `config.json` file and place it to your data directory (`data/config.json`)
-3. Simulate real run (with entrypoint command): `php ./src/app.php run ./data`
+1. Create a data directory: `mkdir -p data`
+2. Follow the configuration sample and create a `config.json` file in the data directory (`data/config.json`).
+3. Simulate a real run using the entrypoint command: `php ./src/app.php run ./data`
 
 ## License
 
-MIT licensed, see [LICENSE](./LICENSE) file.
+This project is MIT licensed. See the [LICENSE](./LICENSE) file for details.
