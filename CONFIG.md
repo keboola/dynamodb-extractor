@@ -1,6 +1,6 @@
-# Configuring in Keboola Connection UI
+# Configuring in Keboola UI
 
-## Sample scan mode
+## Sample Scan Mode
 
 
 ```json
@@ -41,7 +41,7 @@
 ```
 
 
-## Sample query mode
+## Sample Query Mode
 
 
 ```json
@@ -84,7 +84,7 @@
 ```
 
 
-## Sample query mode (with secondary index)
+## Sample Query Mode (with Secondary Index)
 
 
 ```json
@@ -127,47 +127,47 @@
 
 - `db`: DynamoDB instance connection options
     - `endpoint`: `https://dynamodb.REGION.amazonaws.com`
-    - `accessKeyId`: Access key id
+    - `accessKeyId`: Access key ID
     - `#secretAccessKey`: Secret access key (will be encrypted)
     - `regionName`: Region
     
-- `exports`: array of exports
-    - `id`: unique numeric identifier of export
-    - `name`: unique string identifier of export (base table will be named after it)
-    - `table`: name of the table to export from
-    - `index`: (optional) name of the index to export from
-    - `enabled` (optional, default: `true`): if export is enabled or not (there has to be at least one enabled export)
-    - `incremental`: if load of tables to storage will be incremental
-    - `primaryKey`: primary key to set on imported table, defined as array
-    - `mode`: (optional): enum(scan|query) reading mode from dynamoDb - default is scan
-    - `keyConditionExpression`: (required): provide a specific value for the partition key
-    - `expressionAttributeValues`: (required): values that can be substituted in an expression
-    - `expressionAttributeNames`: (optional): substitution tokens for attribute names in an expression. You can use placeholder `$` instead of `#` see sample
-    - `dateFilter` (optional): how to filter scanned documents (only for scan mode)
-        - `field`: field name in document by which you want to filter
-        - `format`: date format (e.g. `Y-m-d` for date or `Y` for year)
-        - `value`: date string from which date value will be created (e.g. `-2 days`)
-    - `limit` (optional): how many documents you want to export
-    - `mapping`: how to map fields in document to CSV columns
+- `exports`: An array of export configurations.
+    - `id`: A unique numeric identifier for the export.
+    - `name`: A unique string identifier for the export (the base table will be named after it).
+    - `table`: The name of the table to export from.
+    - `index` (optional): The name of the index to export from.
+    - `enabled` (optional, default: `true`): Specifies whether the export is enabled. (At least one export must be enabled.)
+    - `incremental`: Determines whether tables loads to Storage will be incremental.
+    - `primaryKey`: The primary key to set on the imported table, defined as an array.
+    - `mode` (optional): enum(scan|query): The reading mode from DynamoDB. Default: `scan`.
+    - `keyConditionExpression` (required): Specifies a specific value for the partition key.
+    - `expressionAttributeValues` (required): Defines values that can be substituted in an expression.
+    - `expressionAttributeNames` (optional): Substitution tokens for attribute names in an expression. You can use the placeholder `$` instead of `#` (see sample).
+    - `dateFilter` (optional): Defines how to filter scanned documents. *(Applicable only for scan mode.)*
+        - `field`: The document field name used for filtering.
+        - `format`: The date format (e.g., `Y-m-d` for a full date or `Y` for a year).
+        - `value`: The relative date string from which date value will be calculated (e.g., `-2 days`).
+    - `limit` (optional): Specifies how many documents to export.
+    - `mapping`: Defines how document fields should be mapped to CSV columns.
 
 
 ### `dateFilter`
 
-*Note: To be able to use `dateFilter` and incremental loads, make sure your database (or index)
-contains field by which documents can be filtered. E.g. add `creationDate` to every document you create*
+***Note:** To use `dateFilter` and incremental loads, make sure that your database (or index)
+contains a field that can be used for filtering documents. For example, add a `creationDate` field to every document you create.*
 
-Extractor uses `Scan` operation to selecting documents from DynamoDB.
+The extractor uses the `Scan` operation to select documents from DynamoDB.
 
-You can specify `dateFilter` parameter to filter documents you want export. Filter condition is
-composed from 3 fields: `field`, `format` and `value`.
+You can specify the `dateFilter` parameter to filter the documents you want export. The filter condition is
+composed of three fields: `field`, `format`, and `value`.
 
-The `value` field is passed to [**strtotime**](https://secure.php.net/strtotime) function. Then the
-`format` and `value` fields are passed to [**date**](https://secure.php.net/date) function to create
-final value which will be used to filter documents. Something like `date($format, strtotime($value))`.
+The `value` field is passed to the [**strtotime**](https://secure.php.net/strtotime) function. Then, the
+`format` and `value` fields are passed to the [**date**](https://secure.php.net/date) function to generate the
+final value, which will be used to filter documents. The equivalent function call is: `date($format, strtotime($value))`.
 
 #### Example
 
-(for date `2018-03-13 18:00:00`)
+(For date `2018-03-13 18:00:00`)
 
 |field|format|value|composed condition|
 |---|---|---|---|
@@ -178,13 +178,13 @@ final value which will be used to filter documents. Something like `date($format
 
 ### `mapping`
 
-- [php-csvmap](https://github.com/keboola/php-csvmap) library is used to parse exported documents
-- in most cases you'll be happy with simple `"some.path.key": "destination"` mapping
-- for advanced usages please check documentation of mapping sections of in
-[MongoDB Extractor](https://help.keboola.com/extractors/database/mongodb/mapping/) or
-[Generic Extractor](https://developers.keboola.com/extend/generic-extractor/configuration/config/mappings/) 
+- The [php-csvmap](https://github.com/keboola/php-csvmap) library is used to parse exported documents.
+- In most cases, a simple mapping like `"some.path.key": "destination"` will suffice.
+- For advanced use cases, please refer mapping sections of in:
+    - [MongoDB Extractor](https://help.keboola.com/extractors/database/mongodb/mapping/)
+    - [Generic Extractor](https://developers.keboola.com/extend/generic-extractor/configuration/config/mappings/) 
 
 ## Links
 
 - [Scanning a Table](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SQLtoNoSQL.ReadData.Scan.html)
-- [DynamoDB Scan operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html)
+- [DynamoDB Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html)
