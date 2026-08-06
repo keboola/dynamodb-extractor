@@ -1,0 +1,449 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Amazon DynamoDB Extractor — Root Configuration (parameters)",
+  "description": "Reads documents from Amazon DynamoDB tables and stores them as Storage tables. One set of AWS credentials in `db` is shared by every entry in `exports`; each export reads one table, either by scanning it or by querying it with a key condition, and maps the resulting documents onto CSV columns. This component is not row-based — all exports live in this root configuration.",
+  "additionalProperties": true,
+  "required": [
+    "db",
+    "exports"
+  ],
+  "properties": {
+    "db": {
+      "type": "object",
+      "title": "DynamoDB Connection",
+      "description": "AWS credentials and endpoint shared by all exports",
+      "propertyOrder": 10,
+      "additionalProperties": true,
+      "required": [
+        "endpoint",
+        "accessKeyId",
+        "#secretAccessKey",
+        "regionName"
+      ],
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Endpoint",
+          "description": "DynamoDB service endpoint",
+          "propertyOrder": 10,
+          "options": {
+            "inputAttributes": {
+              "placeholder": "https://dynamodb.eu-central-1.amazonaws.com"
+            },
+            "tooltip": "The regional DynamoDB service endpoint, in the form `https://dynamodb.REGION.amazonaws.com`. It has to point at the same region as the Region field below."
+          }
+        },
+        "regionName": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Region",
+          "description": "AWS region the table lives in",
+          "propertyOrder": 20,
+          "options": {
+            "inputAttributes": {
+              "placeholder": "eu-central-1"
+            },
+            "tooltip": "AWS region code, e.g. `eu-central-1` or `us-east-1`. It is shown next to the table in the AWS DynamoDB console."
+          }
+        },
+        "accessKeyId": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Access Key ID",
+          "description": "Access key ID of the AWS user reading the table",
+          "propertyOrder": 30,
+          "options": {
+            "tooltip": "Create an access key for an IAM user that is allowed to read the table, in the AWS console under IAM → Users → Security credentials → Create access key."
+          }
+        },
+        "#secretAccessKey": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Secret Access Key",
+          "format": "password",
+          "description": "Secret access key belonging to the access key ID",
+          "propertyOrder": 40,
+          "options": {
+            "tooltip": "AWS shows this value only once, at the moment the access key is created. If it was not saved then, create a new access key. The value is stored encrypted."
+          }
+        }
+      }
+    },
+    "exports": {
+      "type": "array",
+      "title": "Exports",
+      "description": "One entry per exported table; at least one has to be enabled",
+      "propertyOrder": 20,
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "title": "Export",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "name",
+          "table",
+          "incremental",
+          "mapping"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Export ID",
+            "description": "Unique whole number identifying this export",
+            "propertyOrder": 10,
+            "options": {
+              "tooltip": "Any whole number that is unique within this configuration. It is never sent to DynamoDB — it only distinguishes exports from one another."
+            }
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Export Name",
+            "description": "Unique name the output table is named after",
+            "propertyOrder": 20,
+            "options": {
+              "tooltip": "Slugified and used as the output table name, so it has to be unique across exports. A duplicate name fails the job with `Please remove duplicate export names`."
+            }
+          },
+          "enabled": {
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "title": "Enabled",
+            "description": "Whether this export runs; omitting it means enabled",
+            "propertyOrder": 30,
+            "options": {
+              "enum_titles": [
+                "Enabled",
+                "Disabled"
+              ],
+              "tooltip": "A disabled export is skipped without failing the job. If every export is disabled the job fails with `Please enable at least one export`."
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "scan",
+              "query"
+            ],
+            "title": "Read Mode",
+            "description": "How documents are read; omitting it means Scan",
+            "propertyOrder": 40,
+            "options": {
+              "enum_titles": [
+                "Scan",
+                "Query"
+              ],
+              "tooltip": "**Scan** walks the whole table or index and can be narrowed with a date filter. **Query** fetches only the documents matching a key condition, which is far cheaper on large tables but needs a partition key value. Scan and Query accept different fields — a field belonging to the other mode makes the job fail."
+            }
+          },
+          "table": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Table",
+            "description": "DynamoDB table to read from",
+            "propertyOrder": 50,
+            "options": {
+              "tooltip": "Exact, case-sensitive table name as listed in the AWS DynamoDB console."
+            }
+          },
+          "index": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Index (Scan Mode)",
+            "description": "Secondary index to scan instead of the table itself",
+            "propertyOrder": 60,
+            "options": {
+              "tooltip": "Used only in Scan mode. In Query mode this field is ignored — use Secondary Index instead."
+            }
+          },
+          "indexName": {
+            "type": "string",
+            "title": "Secondary Index",
+            "description": "Secondary index to query instead of the table's own key",
+            "propertyOrder": 70,
+            "options": {
+              "dependencies": {
+                "mode": "query"
+              },
+              "tooltip": "Leave empty to query the table's own primary key. Query mode only — setting it on a Scan export fails the job."
+            }
+          },
+          "keyConditionExpression": {
+            "type": "string",
+            "title": "Key Condition Expression",
+            "description": "Condition selecting the documents to fetch",
+            "propertyOrder": 80,
+            "options": {
+              "dependencies": {
+                "mode": "query"
+              },
+              "tooltip": "Required in Query mode. Compares key attributes against placeholders defined in Expression Attribute Values:\n\n```\ntitle = :a\n$yr = :a AND title = :b\n```\n\nUse a `$`-prefixed token for any attribute name that needs escaping and declare it in Expression Attribute Names."
+            }
+          },
+          "expressionAttributeNames": {
+            "type": "object",
+            "format": "editor",
+            "title": "Expression Attribute Names",
+            "description": "Substitution tokens for attribute names used in the key condition",
+            "propertyOrder": 90,
+            "additionalProperties": true,
+            "options": {
+              "dependencies": {
+                "mode": "query"
+              },
+              "tooltip": "Needed when an attribute name collides with a DynamoDB reserved word, such as `year`. DynamoDB tokens normally start with `#`, but Keboola encrypts every `#`-prefixed key, so write `$` instead — the component rewrites it to `#` before calling AWS:\n\n```json\n{ \"$yr\": \"year\" }\n```\n\nQuery mode only."
+            }
+          },
+          "expressionAttributeValues": {
+            "type": "object",
+            "format": "editor",
+            "title": "Expression Attribute Values",
+            "description": "Values substituted into the key condition placeholders",
+            "propertyOrder": 100,
+            "additionalProperties": true,
+            "options": {
+              "dependencies": {
+                "mode": "query"
+              },
+              "tooltip": "Every placeholder used in the key condition has to be defined here, keyed by its `:` name:\n\n```json\n{ \":a\": \"2013\" }\n```\n\nQuery mode only."
+            }
+          },
+          "dateFilter": {
+            "type": "object",
+            "title": "Date Filter (Scan Mode)",
+            "description": "Keeps only documents at or after a date computed at run time",
+            "propertyOrder": 110,
+            "additionalProperties": true,
+            "required": [
+              "field",
+              "format",
+              "value"
+            ],
+            "options": {
+              "tooltip": "Scan mode only — setting it on a Query export fails the job. All three fields have to be filled in together. The filter applied is `field >= date(format, strtotime(value))`, so the table needs a field holding a comparable date string."
+            },
+            "properties": {
+              "field": {
+                "type": "string",
+                "title": "Field",
+                "description": "Document field the filter compares",
+                "propertyOrder": 10,
+                "options": {
+                  "inputAttributes": {
+                    "placeholder": "createdTime"
+                  },
+                  "tooltip": "Name of a field present on every document, holding a date in the format below."
+                }
+              },
+              "format": {
+                "type": "string",
+                "title": "Date Format",
+                "description": "PHP date format the stored values use",
+                "propertyOrder": 20,
+                "options": {
+                  "inputAttributes": {
+                    "placeholder": "Y-m-d"
+                  },
+                  "tooltip": "A PHP `date()` format string matching how the field is stored, for example `Y-m-d`, `Y-m-d H:i:s` or `Y` for a bare year."
+                }
+              },
+              "value": {
+                "type": "string",
+                "title": "From",
+                "description": "Start of the range, relative or absolute",
+                "propertyOrder": 30,
+                "options": {
+                  "inputAttributes": {
+                    "placeholder": "-2 days"
+                  },
+                  "tooltip": "Parsed with PHP `strtotime()`, so both relative values (`-2 days`, `today`, `-10 hours`) and absolute ones (`2018-01-01`) work. A value `strtotime()` cannot parse fails the job."
+                }
+              }
+            }
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Limit",
+            "description": "Maximum number of documents to export",
+            "propertyOrder": 120,
+            "options": {
+              "tooltip": "Omit to export every matching document. Documents are always fetched in batches of up to 1000; the limit only caps the total."
+            }
+          },
+          "incremental": {
+            "type": "boolean",
+            "enum": [
+              false,
+              true
+            ],
+            "title": "Load Type",
+            "description": "How the output table is written to Storage",
+            "propertyOrder": 130,
+            "options": {
+              "enum_titles": [
+                "Full Load",
+                "Incremental Load"
+              ],
+              "tooltip": "Incremental load appends rows and updates existing ones matched by the primary key. Full load replaces the table contents on every run."
+            }
+          },
+          "primaryKey": {
+            "type": "array",
+            "title": "Primary Key",
+            "description": "Output columns forming the table's primary key",
+            "propertyOrder": 140,
+            "items": {
+              "type": "string"
+            },
+            "options": {
+              "tooltip": "Every name listed here has to be one of the destination column names produced by the mapping, otherwise the job fails with `Primary keys do not match columns`. Required in practice for an incremental load to deduplicate."
+            }
+          },
+          "mapping": {
+            "type": "object",
+            "format": "editor",
+            "minProperties": 1,
+            "title": "Mapping",
+            "description": "Maps document fields onto output columns",
+            "propertyOrder": 150,
+            "additionalProperties": true,
+            "options": {
+              "tooltip": "A [php-csvmap](https://github.com/keboola/php-csvmap) definition. Use `\"source.path\": \"column\"` for a plain column, and an object with `\"type\": \"table\"` to break a nested structure out into a child table:\n\n```json\n{\n  \"title\": \"title\",\n  \"info.rating\": \"rating\",\n  \"info\": {\n    \"type\": \"table\",\n    \"destination\": \"info\",\n    \"tableMapping\": { \"rating\": \"rating\" }\n  }\n}\n```\n\nA path that resolves to an object or array without a table mapping fails the job."
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "query"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "keyConditionExpression"
+              ],
+              "not": {
+                "required": [
+                  "dateFilter"
+                ]
+              }
+            },
+            "else": {
+              "allOf": [
+                {
+                  "not": {
+                    "required": [
+                      "indexName"
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "required": [
+                      "keyConditionExpression"
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "required": [
+                      "expressionAttributeNames"
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "required": [
+                      "expressionAttributeValues"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "examples": [
+    {
+      "db": {
+        "endpoint": "https://dynamodb.eu-central-1.amazonaws.com",
+        "regionName": "eu-central-1",
+        "accessKeyId": "<your AWS access key id>",
+        "#secretAccessKey": "<your AWS secret access key>"
+      },
+      "exports": [
+        {
+          "id": 1,
+          "name": "movies",
+          "mode": "scan",
+          "table": "Movies",
+          "enabled": true,
+          "incremental": true,
+          "primaryKey": [
+            "title",
+            "year"
+          ],
+          "dateFilter": {
+            "field": "createdTime",
+            "format": "Y-m-d",
+            "value": "-2 days"
+          },
+          "mapping": {
+            "title": "title",
+            "year": "year",
+            "info.rating": "rating"
+          }
+        }
+      ]
+    },
+    {
+      "db": {
+        "endpoint": "https://dynamodb.eu-central-1.amazonaws.com",
+        "regionName": "eu-central-1",
+        "accessKeyId": "<your AWS access key id>",
+        "#secretAccessKey": "<your AWS secret access key>"
+      },
+      "exports": [
+        {
+          "id": 1,
+          "name": "movies-2013",
+          "mode": "query",
+          "table": "Movies",
+          "enabled": true,
+          "incremental": false,
+          "keyConditionExpression": "$yr = :a",
+          "expressionAttributeNames": {
+            "$yr": "year"
+          },
+          "expressionAttributeValues": {
+            ":a": "2013"
+          },
+          "primaryKey": [
+            "title",
+            "year"
+          ],
+          "mapping": {
+            "title": "title",
+            "year": "year",
+            "info.rating": "rating"
+          }
+        }
+      ]
+    }
+  ]
+}

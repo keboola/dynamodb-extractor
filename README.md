@@ -6,6 +6,29 @@ This Docker application exports data from Amazon DynamoDB to Keboola.
 
 A sample configuration and its description can be found [here](/CONFIG.md).
 
+The JSON schema backing the configuration form (and the validation used by the Keboola MCP
+server and the in-platform AI assistant) lives in
+[`component_config/configSchema.json`](/component_config/configSchema.json). It describes the
+contents of `parameters` only.
+
+## Developer Portal
+
+`scripts/developer_portal/update_properties.sh` pushes the repo-owned Developer Portal
+properties. It runs automatically from the `deploy` job on a semantic-tag release, so the
+repository — not the portal — is the source of truth for whatever it lists.
+
+Today it pushes **only** `configurationSchema`, from `component_config/configSchema.json`.
+Every other portal property (descriptions, URLs, `actions`, `uiOptions`, `encryption`, …) is
+left untouched and stays portal-owned.
+
+Two things to know before changing it:
+
+- Editing `component_config/configSchema.json` is the durable way to change the live schema. A
+  manual portal patch is overwritten on the next tagged release.
+- Adding a property to the script means the repo file starts overwriting the live value. Diff
+  the repo file against `kbagent dev-portal get --app keboola.ex-dynamodb` first. The script
+  refuses to push an empty `{}` / `[]` document rather than silently clearing a live property.
+
 ## Output
 
 After a successful extraction, several CSV files containing exported data will be generated. 
