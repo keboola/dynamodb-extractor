@@ -226,6 +226,9 @@
               "value"
             ],
             "options": {
+              "dependencies": {
+                "mode": "scan"
+              },
               "tooltip": "Scan mode only — setting it on a Query export fails the job. All three fields have to be filled in together. The filter applied is `field >= date(format, strtotime(value))`, so the table needs a field holding a comparable date string."
             },
             "properties": {
