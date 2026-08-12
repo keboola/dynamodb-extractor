@@ -101,11 +101,11 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "title": "Export Name",
-            "description": "Unique name the output table is named after",
+            "title": "Output Table Name",
+            "description": "Names the output Storage table; must be unique across exports",
             "propertyOrder": 20,
             "options": {
-              "tooltip": "Slugified and used as the output table name, so it has to be unique across exports. A duplicate name fails the job with `Please remove duplicate export names`."
+              "tooltip": "This becomes the name of the output table in Storage (slugified). It must be unique across exports — a duplicate fails the job with `Please remove duplicate export names`."
             }
           },
           "enabled": {
@@ -155,11 +155,14 @@
           "index": {
             "type": "string",
             "minLength": 1,
-            "title": "Index (Scan Mode)",
+            "title": "Index",
             "description": "Secondary index to scan instead of the table itself",
             "propertyOrder": 60,
             "options": {
-              "tooltip": "Used only in Scan mode. In Query mode this field is ignored — use Secondary Index instead."
+              "dependencies": {
+                "mode": "scan"
+              },
+              "tooltip": "Scan mode only. Reads a secondary index instead of the table's own key. In Query mode use the Secondary Index field instead."
             }
           },
           "indexName": {
@@ -177,7 +180,7 @@
           "keyConditionExpression": {
             "type": "string",
             "title": "Key Condition Expression",
-            "description": "Condition selecting the documents to fetch",
+            "description": "DynamoDB key condition — which partition/sort key values to fetch",
             "propertyOrder": 80,
             "options": {
               "dependencies": {
@@ -258,8 +261,8 @@
               },
               "value": {
                 "type": "string",
-                "title": "From",
-                "description": "Start of the range, relative or absolute",
+                "title": "From Date",
+                "description": "Keep only documents dated on or after this; a date or a relative expression",
                 "propertyOrder": 30,
                 "options": {
                   "inputAttributes": {
@@ -302,11 +305,16 @@
             "title": "Primary Key",
             "description": "Output columns forming the table's primary key",
             "propertyOrder": 140,
+            "uniqueItems": true,
             "items": {
               "type": "string"
             },
             "options": {
-              "tooltip": "Every name listed here has to be one of the destination column names produced by the mapping, otherwise the job fails with `Primary keys do not match columns`. Required in practice for an incremental load to deduplicate."
+              "tags": true,
+              "inputAttributes": {
+                "placeholder": "Type a destination column name and press Enter"
+              },
+              "tooltip": "Type each primary-key column and press Enter to add it. Every name has to be a destination column produced by the mapping, otherwise the job fails with `Primary keys do not match columns`. Needed for an incremental load to deduplicate rows."
             }
           },
           "mapping": {
